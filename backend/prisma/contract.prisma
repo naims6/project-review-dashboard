@@ -13,14 +13,15 @@ enum ProjectStatus {
 }
 
 model User {
-  id           String    @id @default(uuid())
-  name         String
-  email        String    @unique
-  password String
-  role         Role      @default(STUDENT)
-  projects     Project[]
-  createdAt    DateTime  @default(now())
-  updatedAt    temporal.updatedAt()
+  id               String     @id @default(uuid())
+  name             String
+  email            String     @unique
+  password         String
+  role             Role       @default(STUDENT)
+  submittedProjects Project[] @relation("StudentProjects")
+  reviewedProjects  Project[] @relation("ReviewedProjects")
+  createdAt        DateTime   @default(now())
+  updatedAt        temporal.updatedAt()
 
   @@index([role])
 }
@@ -28,15 +29,16 @@ model User {
 model Project {
   id            String        @id @default(uuid())
   name          String
-  repoUrl       String
+  repoUrl       String        @unique
   liveUrl       String
   description   String
   status        ProjectStatus @default(PENDING)
 
   studentId     String
-  student       User          @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  student       User          @relation("StudentProjects", fields: [studentId], references: [id], onDelete: Restrict)
 
   reviewedById  String?
+  reviewedBy    User?         @relation("ReviewedProjects", fields: [reviewedById], references: [id])
   reviewedAt    DateTime?
   reviewComment String?
 

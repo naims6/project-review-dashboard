@@ -34,3 +34,9 @@ export const authLimiter = createRateLimiter(
   5,
   "Too many attempts, please try again later.",
 );
+
+export const submissionLimiter = createRateLimiter(
+  5,
+  "Too many submissions, please try again later.",
+  60 * 60 * 1000, // 1 hour window
+);

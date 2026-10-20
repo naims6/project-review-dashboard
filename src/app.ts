@@ -2,7 +2,7 @@ import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import notFound from "./middlewares/notFound.js";
-// import globalError from "./middlewares/globalError.js";
+import globalError from "./middlewares/globalError.js";
 import router from "./routes.js";
 
 const app: Application = express();
@@ -25,6 +25,6 @@ app.get("/", (_req: Request, res: Response) => {
 });
 
 app.use(notFound);
-// app.use(globalError);
+app.use(globalError);
 
 export default app;

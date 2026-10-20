@@ -3,7 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import notFound from "./middlewares/notFound.js";
 import globalError from "./middlewares/globalError.js";
-import router from "./routes.js";
+import router from "./routes/routes.js";
 
 const app: Application = express();
 

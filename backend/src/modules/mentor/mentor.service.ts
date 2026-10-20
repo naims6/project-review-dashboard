@@ -9,6 +9,8 @@ export interface IGetProjectsQuery {
   page?: string | number;
   limit?: string | number;
   status?: ProjectStatusType;
+  search?: string;
+  sortOrder?: "asc" | "desc";
 }
 
 export interface IReviewProjectPayload {
@@ -21,15 +23,23 @@ const getProjects = async (query: IGetProjectsQuery) => {
   const limit = Number(query.limit) || 10;
   const offset = (page - 1) * limit;
 
-  const collection = query.status
-    ? db.orm.public.Project.where((p) => p.status.eq(query.status!))
-    : db.orm.public.Project;
+  let collection = db.orm.public.Project;
+
+  if (query.status) {
+    collection = collection.where((p) => p.status.eq(query.status!));
+  }
+
+  if (query.search?.trim()) {
+    collection = collection.where((p) => p.name.ilike(`%${query.search!.trim()}%`));
+  }
+
+  const isAsc = query.sortOrder === "asc";
 
   const [countResult, projects] = await Promise.all([
     collection.aggregate((a) => ({ count: a.count() })),
     collection
       .include("student", (student) => student.select("id", "name", "email"))
-      .orderBy((p) => p.createdAt.desc())
+      .orderBy((p) => (isAsc ? p.createdAt.asc() : p.createdAt.desc()))
       .limit(limit)
       .offset(offset)
       .all(),
@@ -86,25 +96,34 @@ const reviewProject = async (
 };
 
 const getMentorStats = async () => {
-  const [totalResult, pendingResult, approvedResult, rejectedResult] =
-    await Promise.all([
-      db.orm.public.Project.aggregate((a) => ({ count: a.count() })),
-      db.orm.public.Project.where({ status: "PENDING" }).aggregate((a) => ({
-        count: a.count(),
-      })),
-      db.orm.public.Project.where({ status: "APPROVED" }).aggregate((a) => ({
-        count: a.count(),
-      })),
-      db.orm.public.Project.where({ status: "REJECTED" }).aggregate((a) => ({
-        count: a.count(),
-      })),
-    ]);
+  const stats = await db.orm.public.Project
+    .groupBy("status")
+    .aggregate((agg) => ({
+      count: agg.count(),
+    }));
+
+  let pending = 0;
+  let approved = 0;
+  let rejected = 0;
+  let total = 0;
+
+  for (const row of stats) {
+    const count = row.count ?? 0;
+    total += count;
+    if (row.status === "PENDING") {
+      pending = count;
+    } else if (row.status === "APPROVED") {
+      approved = count;
+    } else if (row.status === "REJECTED") {
+      rejected = count;
+    }
+  }
 
   return {
-    total: totalResult.count,
-    pending: pendingResult.count,
-    approved: approvedResult.count,
-    rejected: rejectedResult.count,
+    total,
+    pending,
+    approved,
+    rejected,
   };
 };
 

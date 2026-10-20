@@ -26,6 +26,18 @@ paths:
             type: string
             enum: [PENDING, APPROVED, REJECTED]
           description: Filter by project status
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search projects by name (case-insensitive substring)
+        - name: sortOrder
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+          description: Sort direction by date (asc for oldest first, desc for newest first)
       responses:
         200:
           description: Projects retrieved successfully

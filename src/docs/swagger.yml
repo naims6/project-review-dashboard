@@ -1,0 +1,11 @@
+openapi: 3.0.0
+info:
+  title: Project Review Dashboard API
+  version: 1.0.0
+  description: REST API documentation for Project Review Dashboard built with Express and Prisma 8.
+servers:
+  - url: http://localhost:3000
+    description: Local Development Server
+tags:
+  - name: Auth
+    description: Authentication & student registration

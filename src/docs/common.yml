@@ -1,0 +1,64 @@
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "Enter your JWT token: Bearer <token>"
+
+  schemas:
+    ApiError:
+      type: object
+      required:
+        - success
+        - message
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: An error occurred
+
+    ValidationError:
+      type: object
+      required:
+        - success
+        - message
+        - errors
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Invalid request data
+        errors:
+          type: array
+          items:
+            type: object
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: c7654103-d45c-4ff9-889f-9a4b2b48bfaa
+        name:
+          type: string
+          example: Rahim Ahmed
+        email:
+          type: string
+          format: email
+          example: naimsorker@gmail.com
+        role:
+          type: string
+          enum: [STUDENT, MENTOR, ADMIN]
+          example: STUDENT
+        createdAt:
+          type: string
+          example: 2026-10-20T10:45:36.444Z
+        updatedAt:
+          type: string
+          example: 2026-10-20T10:45:36.433Z

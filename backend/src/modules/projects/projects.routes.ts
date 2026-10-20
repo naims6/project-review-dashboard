@@ -24,4 +24,11 @@ router.get(
   ProjectController.getMyProjects,
 );
 
+router.get(
+  "/:id",
+  isAuthenticated,
+  authorize("STUDENT"),
+  ProjectController.getProjectById,
+);
+
 export const ProjectRoutes = router;

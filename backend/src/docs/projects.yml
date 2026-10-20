@@ -85,3 +85,35 @@ paths:
           $ref: '#/components/responses/ForbiddenError'
         500:
           $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/projects/{id}:
+    get:
+      tags:
+        - Projects
+      summary: Get details of a submitted project (Student)
+      description: Returns details of a specific project submitted by the logged-in student.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Project ID
+      responses:
+        200:
+          description: Project details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectCreatedResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/InternalServerError'

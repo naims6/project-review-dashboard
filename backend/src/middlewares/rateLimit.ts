@@ -4,16 +4,17 @@ import AppError from "../utils/AppError.js";
 import { StatusCodes } from "http-status-codes";
 
 // Factory
-
 const createRateLimiter = (
   max: number,
   message: string,
   windowMs = 15 * 60 * 1000, // 15 minutes
+  keyGenerator?: (req: Request) => string,
 ) =>
   rateLimit({
     max,
     message,
     windowMs,
+    keyGenerator,
     standardHeaders: "draft-8",
     legacyHeaders: false,
     handler: (
@@ -26,17 +27,20 @@ const createRateLimiter = (
 
 // Limiters
 export const globalLimiter = createRateLimiter(
-  100,
+  150,
   "Too many requests, please try again later.",
+  15 * 60 * 1000,
 );
 
 export const authLimiter = createRateLimiter(
-  5,
-  "Too many attempts, please try again later.",
+  20,
+  "Too many authentication attempts, please try again later.",
+  15 * 60 * 1000,
 );
 
 export const submissionLimiter = createRateLimiter(
-  5,
-  "Too many submissions, please try again later.",
-  60 * 60 * 1000, // 1 hour window
+  15,
+  "Too many submissions, please try again in a few minutes.",
+  15 * 60 * 1000, // 15 minute window
+  (req: Request) => req.user?.id || req.ip || "unknown",
 );

@@ -79,7 +79,20 @@ const getMyProjects = async (
   return formatPaginationResult(projects, countResult.count, { page, limit });
 };
 
+const getProjectById = async (id: string, studentId: string) => {
+  const project = await db.orm.public.Project
+    .where({ id, studentId })
+    .first();
+
+  if (!project) {
+    throw new AppError(StatusCodes.NOT_FOUND, "Project not found");
+  }
+
+  return project;
+};
+
 export const ProjectService = {
   createProject,
   getMyProjects,
+  getProjectById,
 };

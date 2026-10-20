@@ -7,7 +7,7 @@ import config from "../config/env.js";
 
 const isAuthenticated = (req: Request, _res: Response, next: NextFunction) => {
   try {
-    const cookieToken = req.cookies.accessToken;
+    const cookieToken = req.cookies?.accessToken;
     const headerToken = req.headers.authorization?.split(" ")[1];
 
     const token = headerToken || cookieToken;

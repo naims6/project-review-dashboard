@@ -9,3 +9,7 @@ servers:
 tags:
   - name: Auth
     description: Authentication & student registration
+  - name: Projects
+    description: Student project submissions and management
+  - name: Mentor
+    description: Mentor project reviews, status filters, and statistics

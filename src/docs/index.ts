@@ -17,6 +17,8 @@ const loadYaml = (fileName: string) => {
 const baseDoc = loadYaml("swagger.yml");
 const commonDoc = loadYaml("common.yml");
 const authDoc = loadYaml("auth.yml");
+const projectDoc = loadYaml("projects.yml");
+const mentorDoc = loadYaml("mentor.yml");
 
 export const swaggerDocument = {
   ...baseDoc,
@@ -26,6 +28,8 @@ export const swaggerDocument = {
   },
   paths: {
     ...authDoc.paths,
+    ...projectDoc.paths,
+    ...mentorDoc.paths,
   },
 };
 

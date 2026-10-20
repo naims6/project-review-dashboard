@@ -1,18 +1,19 @@
 import { NextFunction, Request, Response } from "express";
-import AppError from "../utils/AppError.js";
+import { StatusCodes } from "http-status-codes";
 import jwt from "jsonwebtoken";
+import AppError from "../utils/AppError.js";
 import { IJwtPayload } from "../types/index.js";
 import config from "../config/env.js";
 
-const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
+const isAuthenticated = (req: Request, _res: Response, next: NextFunction) => {
   try {
     const cookieToken = req.cookies.accessToken;
     const headerToken = req.headers.authorization?.split(" ")[1];
 
     const token = headerToken || cookieToken;
-    console.log("token:", token);
+
     if (!token) {
-      throw new AppError(401, "Unauthorized Access");
+      return next(new AppError(StatusCodes.UNAUTHORIZED, "Unauthorized Access"));
     }
 
     const decoded = jwt.verify(
@@ -20,10 +21,8 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
       config.jwt_access_secret as string,
     ) as IJwtPayload;
 
-    console.log("decoded:", decoded);
-
     if (!decoded) {
-      throw new AppError(401, "Unauthorized");
+      return next(new AppError(StatusCodes.UNAUTHORIZED, "Unauthorized Access"));
     }
 
     req.user = {
@@ -34,7 +33,7 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
 
     next();
   } catch {
-    throw new AppError(401, "Unauthorized Access");
+    next(new AppError(StatusCodes.UNAUTHORIZED, "Unauthorized Access"));
   }
 };
 

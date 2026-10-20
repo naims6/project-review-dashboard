@@ -1,0 +1,58 @@
+paths:
+  /api/v1/projects:
+    post:
+      tags:
+        - Projects
+      summary: Submit a project (Student)
+      description: Allows an authenticated student to submit a new project for review.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - repoUrl
+                - liveUrl
+                - description
+              properties:
+                name:
+                  type: string
+                  example: Portfolio Website
+                repoUrl:
+                  type: string
+                  example: https://github.com/student/portfolio
+                liveUrl:
+                  type: string
+                  example: https://portfolio.vercel.app
+                description:
+                  type: string
+                  example: Full-stack developer portfolio built with Next.js and Tailwind.
+      responses:
+        201:
+          description: Project submitted successfully
+        400:
+          description: Validation error
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden (Students only)
+
+  /api/v1/projects/me:
+    get:
+      tags:
+        - Projects
+      summary: List the student's own submissions (Student)
+      description: Returns all project submissions belonging to the logged-in student.
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Projects retrieved successfully
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden (Students only)

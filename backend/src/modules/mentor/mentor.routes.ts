@@ -1,5 +1,5 @@
 import { Router } from "express";
-import isAuthenticated from "../../middlewares/isAuthaticate.js";
+import isAuthenticated from "../../middlewares/isAuthenticated.js";
 import authorize from "../../middlewares/authorize.js";
 import validateRequest from "../../middlewares/validateRequest.js";
 import { MentorValidation } from "./mentor.validation.js";

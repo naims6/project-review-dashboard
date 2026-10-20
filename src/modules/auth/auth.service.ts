@@ -85,7 +85,27 @@ const loginUser = async (payload: ILoginUserPayload) => {
   };
 };
 
+const getMe = async (userId: string) => {
+  const user = await db.orm.public.User.select(
+    "id",
+    "name",
+    "email",
+    "role",
+    "createdAt",
+    "updatedAt",
+  )
+    .where({ id: userId })
+    .first();
+
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND, "User not found");
+  }
+
+  return user;
+};
+
 export const AuthService = {
   signupStudent,
   loginUser,
+  getMe,
 };

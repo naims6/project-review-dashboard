@@ -22,7 +22,7 @@ paths:
                 email:
                   type: string
                   format: email
-                  example: naimsorker@gmail.com
+                  example: rahim@example.com
                 password:
                   type: string
                   example: password123
@@ -63,7 +63,7 @@ paths:
       tags:
         - Auth
       summary: Authenticate a user
-      description: Validates email and password, returning JWT access token and user info.
+      description: Validates email and password, returning JWT access token, setting auth cookie, and returning user profile.
       requestBody:
         required: true
         content:
@@ -77,7 +77,7 @@ paths:
                 email:
                   type: string
                   format: email
-                  example: naimsorker@gmail.com
+                  example: rahim@example.com
                 password:
                   type: string
                   example: password123
@@ -114,6 +114,81 @@ paths:
                 $ref: '#/components/schemas/ValidationError'
         401:
           description: Invalid email or password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /api/v1/auth/me:
+    get:
+      tags:
+        - Auth
+      summary: Get the logged-in user's profile
+      description: Retrieves the profile details of the currently authenticated user.
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: User profile retrieved successfully
+                  data:
+                    $ref: '#/components/schemas/User'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /api/v1/auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: Clear the authentication session/cookie
+      description: Clears HTTP-only access token cookie and ends the current authentication session.
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Logged out successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  statusCode:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Logged out successfully
+                  data:
+                    type: "null"
+                    example: null
+        401:
+          description: Unauthorized
           content:
             application/json:
               schema:

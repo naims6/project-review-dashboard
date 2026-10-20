@@ -1,0 +1,24 @@
+{
+  "name": "PH",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "contract:emit": "prisma contract emit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@12.14.0",
+  "type": "module",
+  "dependencies": {
+    "@prisma/orm-postgres": "8.0.0-rc.18",
+    "dotenv": "^18.0.8"
+  },
+  "devDependencies": {
+    "@prisma/cli-engine": "0.7.0",
+    "@types/node": "^26.6.5",
+    "prisma": "8.0.0-rc.23"
+  }
+}

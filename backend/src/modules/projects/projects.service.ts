@@ -13,23 +13,38 @@ const createProject = async (
   studentId: string,
   payload: ICreateProjectPayload,
 ) => {
-  // Prevent duplicate submission: repoUrl is unique
-  const existing = await db.orm.public.Project.where({
-    repoUrl: payload.repoUrl,
-  }).first();
+  // Prevent duplicate submissions: check both project name (for this student) and repoUrl
+  const [existingByName, existingByRepo] = await Promise.all([
+    db.orm.public.Project
+      .where((p) => p.studentId.eq(studentId))
+      .where((p) => p.name.ilike(payload.name.trim()))
+      .first(),
+    db.orm.public.Project.where({
+      repoUrl: payload.repoUrl.trim(),
+    }).first(),
+  ]);
 
-  if (existing) {
+  if (existingByName) {
     throw new AppError(
       StatusCodes.CONFLICT,
-      "A project with this repository URL has already been submitted",
+      "You have already submitted a project with this name",
+    );
+  }
+
+  if (existingByRepo) {
+    throw new AppError(
+      StatusCodes.CONFLICT,
+      existingByRepo.studentId === studentId
+        ? "You have already submitted a project with this repository URL"
+        : "A project with this repository URL has already been submitted",
     );
   }
 
   const project = await db.orm.public.Project.create({
-    name: payload.name,
-    repoUrl: payload.repoUrl,
-    liveUrl: payload.liveUrl,
-    description: payload.description,
+    name: payload.name.trim(),
+    repoUrl: payload.repoUrl.trim(),
+    liveUrl: payload.liveUrl.trim(),
+    description: payload.description.trim(),
     studentId: studentId,
     status: "PENDING",
   });

@@ -7,7 +7,7 @@ const bootstrap = async () => {
   let server: Server;
 
   try {
-    await db.connect()
+    await db.connect();
     console.log("Database connected successfully");
     // start server
     server = app.listen(config.port, () => {
@@ -60,7 +60,7 @@ const bootstrap = async () => {
     });
   } catch (error) {
     console.log("Server Error", error);
-    // await prisma.$disconnect();
+    await db.close();
     process.exit(1);
   }
 };

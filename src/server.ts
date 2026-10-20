@@ -1,13 +1,13 @@
 import { Server } from "http";
 import app from "./app.js";
 import config from "./config/env.js";
+import { db } from "../prisma/db.js";
 
 const bootstrap = async () => {
   let server: Server;
 
   try {
-    // await prisma.$connect();
-
+    await db.connect()
     console.log("Database connected successfully");
     // start server
     server = app.listen(config.port, () => {

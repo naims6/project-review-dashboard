@@ -1,7 +1,7 @@
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-// import notFound from "./middlewares/notFound.js";
+import notFound from "./middlewares/notFound.js";
 // import globalError from "./middlewares/globalError.js";
 import router from "./routes.js";
 
@@ -24,7 +24,7 @@ app.get("/", (_req: Request, res: Response) => {
   });
 });
 
-// app.use(notFound);
+app.use(notFound);
 // app.use(globalError);
 
 export default app;

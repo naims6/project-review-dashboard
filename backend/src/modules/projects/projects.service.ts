@@ -1,6 +1,11 @@
 import { StatusCodes } from "http-status-codes";
 import { db } from "../../../prisma/db.js";
 import AppError from "../../utils/AppError.js";
+import {
+  calculatePagination,
+  formatPaginationResult,
+  IPaginationOptions,
+} from "../../utils/pagination.js";
 
 export interface ICreateProjectPayload {
   name: string;
@@ -52,13 +57,26 @@ const createProject = async (
   return project;
 };
 
-const getMyProjects = async (studentId: string) => {
-  const projects = await db.orm.public.Project
-    .where((p) => p.studentId.eq(studentId))
-    .orderBy((p) => p.createdAt.desc())
-    .all();
+const getMyProjects = async (
+  studentId: string,
+  query: IPaginationOptions = {},
+) => {
+  const { page, limit, offset } = calculatePagination(query);
 
-  return projects;
+  const collection = db.orm.public.Project.where((p) =>
+    p.studentId.eq(studentId),
+  );
+
+  const [countResult, projects] = await Promise.all([
+    collection.aggregate((a) => ({ count: a.count() })),
+    collection
+      .orderBy((p) => p.createdAt.desc())
+      .limit(limit)
+      .offset(offset)
+      .all(),
+  ]);
+
+  return formatPaginationResult(projects, countResult.count, { page, limit });
 };
 
 export const ProjectService = {

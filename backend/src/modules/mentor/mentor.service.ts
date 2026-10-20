@@ -2,12 +2,15 @@ import { StatusCodes } from "http-status-codes";
 import { Temporal } from "temporal-polyfill";
 import { db } from "../../../prisma/db.js";
 import AppError from "../../utils/AppError.js";
+import {
+  calculatePagination,
+  formatPaginationResult,
+  IPaginationOptions,
+} from "../../utils/pagination.js";
 
 export type ProjectStatusType = "PENDING" | "APPROVED" | "REJECTED";
 
-export interface IGetProjectsQuery {
-  page?: string | number;
-  limit?: string | number;
+export interface IGetProjectsQuery extends IPaginationOptions {
   status?: ProjectStatusType;
   search?: string;
   sortOrder?: "asc" | "desc";
@@ -19,9 +22,7 @@ export interface IReviewProjectPayload {
 }
 
 const getProjects = async (query: IGetProjectsQuery) => {
-  const page = Number(query.page) || 1;
-  const limit = Number(query.limit) || 10;
-  const offset = (page - 1) * limit;
+  const { page, limit, offset } = calculatePagination(query);
 
   let collection = db.orm.public.Project;
 
@@ -45,18 +46,7 @@ const getProjects = async (query: IGetProjectsQuery) => {
       .all(),
   ]);
 
-  const total = countResult.count;
-  const totalPages = Math.ceil(total / limit);
-
-  return {
-    meta: {
-      page,
-      limit,
-      total,
-      totalPages,
-    },
-    data: projects,
-  };
+  return formatPaginationResult(projects, countResult.count, { page, limit });
 };
 
 const getProjectById = async (id: string) => {

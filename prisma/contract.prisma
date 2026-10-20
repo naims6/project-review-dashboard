@@ -1,21 +1,49 @@
 // use prisma-8
 
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String?
-  name      String?
-  posts     Post[]
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+enum Role {
+  STUDENT
+  MENTOR
+  ADMIN
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+enum ProjectStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
+
+model User {
+  id           String    @id @default(uuid())
+  name         String
+  email        String    @unique
+  password String
+  role         Role      @default(STUDENT)
+  projects     Project[]
+  createdAt    DateTime  @default(now())
+  updatedAt    temporal.updatedAt()
+
+  @@index([role])
+}
+
+model Project {
+  id            String        @id @default(uuid())
+  name          String
+  repoUrl       String
+  liveUrl       String
+  description   String
+  status        ProjectStatus @default(PENDING)
+
+  studentId     String
+  student       User          @relation(fields: [studentId], references: [id], onDelete: Restrict)
+
+  reviewedById  String?
+  reviewedAt    DateTime?
+  reviewComment String?
+
+  createdAt     DateTime      @default(now())
+  updatedAt     temporal.updatedAt()
+
+  @@index([status, createdAt])
+  @@index([studentId, createdAt])
+}
+

@@ -24,9 +24,11 @@ paths:
                   example: Portfolio Website
                 repoUrl:
                   type: string
+                  format: uri
                   example: https://github.com/student/portfolio
                 liveUrl:
                   type: string
+                  format: uri
                   example: https://portfolio.vercel.app
                 description:
                   type: string
@@ -34,12 +36,20 @@ paths:
       responses:
         201:
           description: Project submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectCreatedResponse'
         400:
-          description: Validation error
+          $ref: '#/components/responses/BadRequestError'
         401:
-          description: Unauthorized
+          $ref: '#/components/responses/UnauthorizedError'
         403:
-          description: Forbidden (Students only)
+          $ref: '#/components/responses/ForbiddenError'
+        409:
+          $ref: '#/components/responses/ConflictError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
 
   /api/v1/projects/me:
     get:
@@ -65,7 +75,13 @@ paths:
       responses:
         200:
           description: Projects retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProjectsResponse'
         401:
-          description: Unauthorized
+          $ref: '#/components/responses/UnauthorizedError'
         403:
-          description: Forbidden (Students only)
+          $ref: '#/components/responses/ForbiddenError'
+        500:
+          $ref: '#/components/responses/InternalServerError'

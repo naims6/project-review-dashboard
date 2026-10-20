@@ -25,6 +25,24 @@ export const swaggerDocument = {
   components: {
     ...baseDoc.components,
     ...commonDoc.components,
+    securitySchemes: {
+      ...baseDoc.components?.securitySchemes,
+      ...commonDoc.components?.securitySchemes,
+    },
+    schemas: {
+      ...baseDoc.components?.schemas,
+      ...commonDoc.components?.schemas,
+      ...authDoc.components?.schemas,
+      ...projectDoc.components?.schemas,
+      ...mentorDoc.components?.schemas,
+    },
+    responses: {
+      ...baseDoc.components?.responses,
+      ...commonDoc.components?.responses,
+      ...authDoc.components?.responses,
+      ...projectDoc.components?.responses,
+      ...mentorDoc.components?.responses,
+    },
   },
   paths: {
     ...authDoc.paths,

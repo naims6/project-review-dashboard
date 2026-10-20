@@ -41,10 +41,18 @@ paths:
       responses:
         200:
           description: Projects retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedMentorProjectsResponse'
+        400:
+          $ref: '#/components/responses/BadRequestError'
         401:
-          description: Unauthorized
+          $ref: '#/components/responses/UnauthorizedError'
         403:
-          description: Forbidden (Mentor only)
+          $ref: '#/components/responses/ForbiddenError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
 
   /api/v1/mentor/projects/{id}:
     get:
@@ -65,12 +73,20 @@ paths:
       responses:
         200:
           description: Project retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectWithStudentResponse'
+        400:
+          $ref: '#/components/responses/BadRequestError'
         401:
-          description: Unauthorized
+          $ref: '#/components/responses/UnauthorizedError'
         403:
-          description: Forbidden (Mentor only)
+          $ref: '#/components/responses/ForbiddenError'
         404:
-          description: Project not found
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
 
   /api/v1/mentor/projects/{id}/review:
     patch:
@@ -107,14 +123,20 @@ paths:
       responses:
         200:
           description: Project review recorded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
         400:
-          description: Validation error
+          $ref: '#/components/responses/BadRequestError'
         401:
-          description: Unauthorized
+          $ref: '#/components/responses/UnauthorizedError'
         403:
-          description: Forbidden (Mentor only)
+          $ref: '#/components/responses/ForbiddenError'
         404:
-          description: Project not found
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
 
   /api/v1/mentor/stats:
     get:
@@ -127,7 +149,13 @@ paths:
       responses:
         200:
           description: Mentor stats retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MentorStatsResponse'
         401:
-          description: Unauthorized
+          $ref: '#/components/responses/UnauthorizedError'
         403:
-          description: Forbidden (Mentor only)
+          $ref: '#/components/responses/ForbiddenError'
+        500:
+          $ref: '#/components/responses/InternalServerError'

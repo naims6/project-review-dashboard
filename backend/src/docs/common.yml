@@ -7,6 +7,7 @@ components:
       description: "Enter your JWT token: Bearer <token>"
 
   schemas:
+    # Error Schemas
     ApiError:
       type: object
       required:
@@ -18,7 +19,7 @@ components:
           example: false
         message:
           type: string
-          example: An error occurred
+          example: Resource not found
 
     ValidationError:
       type: object
@@ -37,7 +38,26 @@ components:
           type: array
           items:
             type: object
+            properties:
+              code:
+                type: string
+                example: invalid_type
+              expected:
+                type: string
+                example: string
+              received:
+                type: string
+                example: undefined
+              path:
+                type: array
+                items:
+                  type: string
+                example: ["name"]
+              message:
+                type: string
+                example: Name is required
 
+    # User Schemas
     User:
       type: object
       properties:
@@ -51,14 +71,349 @@ components:
         email:
           type: string
           format: email
-          example: naimsorker@gmail.com
+          example: rahim@example.com
         role:
           type: string
           enum: [STUDENT, MENTOR, ADMIN]
           example: STUDENT
         createdAt:
           type: string
-          example: 2026-10-20T10:45:36.444Z
+          example: "2026-10-20T10:45:36.444Z"
         updatedAt:
           type: string
-          example: 2026-10-20T10:45:36.433Z
+          example: "2026-10-20T10:45:36.433Z"
+
+    UserResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        statusCode:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: User profile retrieved successfully
+        data:
+          $ref: '#/components/schemas/User'
+
+    UserCreatedResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        statusCode:
+          type: integer
+          example: 201
+        message:
+          type: string
+          example: Student registered successfully
+        data:
+          $ref: '#/components/schemas/User'
+
+    AuthLoginData:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        user:
+          $ref: '#/components/schemas/User'
+
+    AuthLoginResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        statusCode:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: User logged in successfully
+        data:
+          $ref: '#/components/schemas/AuthLoginData'
+
+    LogoutResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        statusCode:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Logged out successfully
+        data:
+          type: "null"
+          nullable: true
+          example: null
+
+    # Project Schemas
+    ProjectStudent:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: c7654103-d45c-4ff9-889f-9a4b2b48bfaa
+        name:
+          type: string
+          example: Rahim Ahmed
+        email:
+          type: string
+          format: email
+          example: rahim@example.com
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d92ef216-5bc7-43aa-a387-548981ef9489
+        name:
+          type: string
+          example: Portfolio Website
+        repoUrl:
+          type: string
+          format: uri
+          example: https://github.com/student/portfolio
+        liveUrl:
+          type: string
+          format: uri
+          example: https://portfolio.vercel.app
+        description:
+          type: string
+          example: Full-stack developer portfolio built with Next.js and Tailwind.
+        status:
+          type: string
+          enum: [PENDING, APPROVED, REJECTED]
+          example: PENDING
+        studentId:
+          type: string
+          format: uuid
+          example: c7654103-d45c-4ff9-889f-9a4b2b48bfaa
+        reviewedById:
+          type: string
+          format: uuid
+          nullable: true
+          example: null
+        reviewedAt:
+          type: string
+          nullable: true
+          example: null
+        reviewComment:
+          type: string
+          nullable: true
+          example: null
+        createdAt:
+          type: string
+          example: "2026-10-20T11:00:00.000Z"
+        updatedAt:
+          type: string
+          example: "2026-10-20T11:00:00.000Z"
+
+    ProjectWithStudent:
+      allOf:
+        - $ref: '#/components/schemas/Project'
+        - type: object
+          properties:
+            student:
+              $ref: '#/components/schemas/ProjectStudent'
+
+    ProjectCreatedResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        statusCode:
+          type: integer
+          example: 201
+        message:
+          type: string
+          example: Project submitted successfully
+        data:
+          $ref: '#/components/schemas/Project'
+
+    ProjectResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        statusCode:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Project review recorded successfully
+        data:
+          $ref: '#/components/schemas/Project'
+
+    ProjectWithStudentResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        statusCode:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Project retrieved successfully
+        data:
+          $ref: '#/components/schemas/ProjectWithStudent'
+
+    # Pagination & List Schemas
+    PaginationMeta:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 10
+        total:
+          type: integer
+          example: 25
+        totalPages:
+          type: integer
+          example: 3
+
+    PaginatedProjectsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        statusCode:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Projects retrieved successfully
+        data:
+          type: object
+          properties:
+            meta:
+              $ref: '#/components/schemas/PaginationMeta'
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Project'
+
+    PaginatedMentorProjectsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        statusCode:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Projects retrieved successfully
+        data:
+          type: object
+          properties:
+            meta:
+              $ref: '#/components/schemas/PaginationMeta'
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProjectWithStudent'
+
+    # Mentor Stats
+    MentorStats:
+      type: object
+      properties:
+        total:
+          type: integer
+          example: 25
+        pending:
+          type: integer
+          example: 10
+        approved:
+          type: integer
+          example: 12
+        rejected:
+          type: integer
+          example: 3
+
+    MentorStatsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        statusCode:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Mentor stats retrieved successfully
+        data:
+          $ref: '#/components/schemas/MentorStats'
+
+  responses:
+    BadRequestError:
+      description: Bad Request / Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+    UnauthorizedError:
+      description: Unauthorized - Access token is missing, invalid, or expired
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          example:
+            success: false
+            message: Unauthorized Access
+    ForbiddenError:
+      description: Forbidden - Insufficient permissions to access this resource
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          example:
+            success: false
+            message: You are not authorized to perform this action
+    NotFoundError:
+      description: Not Found - Requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          example:
+            success: false
+            message: Resource not found
+    ConflictError:
+      description: Conflict - Resource with the same unique identifier already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          example:
+            success: false
+            message: Resource already exists
+    InternalServerError:
+      description: Internal Server Error - Unexpected server condition
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          example:
+            success: false
+            message: Something went wrong

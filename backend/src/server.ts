@@ -1,7 +1,7 @@
 import { Server } from "http";
 import app from "./app.js";
 import config from "./config/env.js";
-import { db } from "../prisma/db.js";
+import { db } from "./prisma/db.js";
 
 const bootstrap = async () => {
   let server: Server;

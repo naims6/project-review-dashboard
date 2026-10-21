@@ -8,8 +8,8 @@
     "contract:emit": "prisma contract emit",
     "dev": "tsx --watch src/server.ts",
     "start": "node dist/src/server.js",
-    "build": "tsc",
-    "seed": "tsx prisma/seed.ts"
+    "build": "prisma contract emit && tsc",
+    "seed": "tsx src/prisma/seed.ts"
   },
   "keywords": [],
   "author": "",

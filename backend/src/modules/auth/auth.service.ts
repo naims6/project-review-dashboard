@@ -1,7 +1,7 @@
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { StatusCodes } from "http-status-codes";
-import { db } from "../../../prisma/db.js";
+import { db } from "../../prisma/db.js";
 import config from "../../config/env.js";
 import AppError from "../../utils/AppError.js";
 import { IJwtPayload } from "../../types/index.js";

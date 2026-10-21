@@ -2,7 +2,8 @@ import "dotenv/config";
 import "temporal-polyfill/full/global";
 import bcryptjs from "bcryptjs";
 import { db } from "./db.js";
-import config from "../src/config/env.js";
+import config from "../config/env.js";
+
 
 const USERS_TO_SEED = [
   {

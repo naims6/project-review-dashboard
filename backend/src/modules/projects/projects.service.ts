@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { db } from "../../../prisma/db.js";
+import { db } from "../../prisma/db.js";
 import AppError from "../../utils/AppError.js";
 import {
   calculatePagination,

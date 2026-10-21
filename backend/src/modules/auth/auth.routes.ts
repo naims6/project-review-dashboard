@@ -22,6 +22,13 @@ router.post(
   AuthController.loginUser,
 );
 
+router.post(
+  "/refresh-token",
+  authLimiter,
+  validateRequest(AuthValidation.refreshTokenValidationSchema),
+  AuthController.refreshToken,
+);
+
 // Authenticated routes
 router.get("/me", isAuthenticated, AuthController.getMe);
 router.post("/logout", isAuthenticated, AuthController.logoutUser);

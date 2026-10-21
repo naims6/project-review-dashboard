@@ -77,6 +77,34 @@ paths:
         500:
           $ref: '#/components/responses/InternalServerError'
 
+  /api/v1/auth/refresh-token:
+    post:
+      tags:
+        - Auth
+      summary: Refresh access token
+      description: Issues a new JWT access token using the refreshToken sent via HTTP-only cookie or request body.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+      responses:
+        200:
+          description: Access token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshTokenResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+
   /api/v1/auth/me:
     get:
       tags:

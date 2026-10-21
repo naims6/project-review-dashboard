@@ -4,6 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import { db } from "../../../prisma/db.js";
 import config from "../../config/env.js";
 import AppError from "../../utils/AppError.js";
+import { IJwtPayload } from "../../types/index.js";
 import { ILoginUserPayload, ISignupStudentPayload } from "./auth.validation.js";
 
 const signupStudent = async (payload: ISignupStudentPayload) => {
@@ -61,8 +62,58 @@ const loginUser = async (payload: ILoginUserPayload) => {
     throw new AppError(StatusCodes.UNAUTHORIZED, "Invalid email or password");
   }
 
-  // 3. Generate JWT access token
-  const jwtPayload = {
+  // 3. Generate JWT access and refresh tokens
+  const jwtPayload: IJwtPayload = {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+  };
+
+  const accessToken = jwt.sign(jwtPayload, config.jwt_access_secret, {
+    expiresIn: config.jwt_access_expires_in,
+  } as jwt.SignOptions);
+
+  const refreshToken = jwt.sign(jwtPayload, config.jwt_refresh_secret, {
+    expiresIn: config.jwt_refresh_expires_in,
+  } as jwt.SignOptions);
+
+  return {
+    accessToken,
+    refreshToken,
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    },
+  };
+};
+
+const refreshToken = async (token: string) => {
+  // 1. Verify refresh token
+  let decoded: IJwtPayload;
+  try {
+    decoded = jwt.verify(
+      token,
+      config.jwt_refresh_secret,
+    ) as IJwtPayload;
+  } catch {
+    throw new AppError(
+      StatusCodes.UNAUTHORIZED,
+      "Invalid or expired refresh token",
+    );
+  }
+
+  // 2. Check if user still exists
+  const user = await db.orm.public.User.where({ id: decoded.id }).first();
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND, "User not found");
+  }
+
+  // 3. Generate new access token
+  const jwtPayload: IJwtPayload = {
     id: user.id,
     email: user.email,
     role: user.role,
@@ -74,14 +125,6 @@ const loginUser = async (payload: ILoginUserPayload) => {
 
   return {
     accessToken,
-    user: {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    },
   };
 };
 
@@ -107,5 +150,6 @@ const getMe = async (userId: string) => {
 export const AuthService = {
   signupStudent,
   loginUser,
+  refreshToken,
   getMe,
 };

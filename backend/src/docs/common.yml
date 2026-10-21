@@ -119,6 +119,9 @@ components:
         accessToken:
           type: string
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refreshToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         user:
           $ref: '#/components/schemas/User'
 
@@ -136,6 +139,28 @@ components:
           example: User logged in successfully
         data:
           $ref: '#/components/schemas/AuthLoginData'
+
+    RefreshTokenData:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    RefreshTokenResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        statusCode:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Access token refreshed successfully
+        data:
+          $ref: '#/components/schemas/RefreshTokenData'
 
     LogoutResponse:
       type: object

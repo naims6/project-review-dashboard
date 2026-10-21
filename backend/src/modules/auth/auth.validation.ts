@@ -23,11 +23,21 @@ const loginValidationSchema = z.object({
     .min(1, "Password is required"),
 });
 
+const refreshTokenValidationSchema = z.object({
+  refreshToken: z
+    .string({
+      error: "Refresh token must be a valid string",
+    })
+    .optional(),
+});
+
 type ISignupStudentPayload = z.infer<typeof signupValidationSchema>;
 type ILoginUserPayload = z.infer<typeof loginValidationSchema>;
+type IRefreshTokenPayload = z.infer<typeof refreshTokenValidationSchema>;
 
-export type { ISignupStudentPayload, ILoginUserPayload };
+export type { ISignupStudentPayload, ILoginUserPayload, IRefreshTokenPayload };
 export const AuthValidation = {
   signupValidationSchema,
   loginValidationSchema,
+  refreshTokenValidationSchema,
 };

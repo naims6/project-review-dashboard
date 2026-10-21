@@ -147,6 +147,22 @@
               }
             },
             "relations": {
+              "reviewedBy": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "reviewedById"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
               "student": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -266,7 +282,22 @@
               }
             },
             "relations": {
-              "projects": {
+              "reviewedProjects": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "reviewedById"
+                  ]
+                },
+                "to": {
+                  "model": "Project",
+                  "namespace": "public"
+                }
+              },
+              "submittedProjects": {
                 "cardinality": "1:N",
                 "on": {
                   "localFields": [
@@ -423,9 +454,36 @@
                     "namespaceId": "public",
                     "tableName": "User"
                   }
+                },
+                {
+                  "index": {
+                    "name": "Project_reviewedById_idx_e2835478"
+                  },
+                  "source": {
+                    "columns": [
+                      "reviewedById"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Project"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "User"
+                  }
                 }
               ],
               "indexes": [
+                {
+                  "columns": [
+                    "reviewedById"
+                  ],
+                  "name": "Project_reviewedById_idx_e2835478",
+                  "prefix": "Project_reviewedById_idx",
+                  "unique": false
+                },
                 {
                   "columns": [
                     "status",
@@ -458,7 +516,13 @@
                   "id"
                 ]
               },
-              "uniques": []
+              "uniques": [
+                {
+                  "columns": [
+                    "repoUrl"
+                  ]
+                }
+              ]
             },
             "User": {
               "checks": [
@@ -567,7 +631,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "f3c9add1b049adaf7604bdb871d672f53f3f54b4a243ebc71fcaa872acef98e9"
+    "storageHash": "6431707f5dad608249175e5eaddbf59db8d5e37d147f8cb49d718d304862b96a"
   },
   "execution": {
     "executionHash": "3b184e32d7e01f962fb7c55724ee58b85508af976c90ce9bb61cfc7d7d989005",

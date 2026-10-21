@@ -219,6 +219,65 @@ components:
           type: string
           example: "2026-10-20T11:00:00.000Z"
 
+    ProjectSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d92ef216-5bc7-43aa-a387-548981ef9489
+        name:
+          type: string
+          example: Portfolio Website
+        repoUrl:
+          type: string
+          format: uri
+          example: https://github.com/student/portfolio
+        liveUrl:
+          type: string
+          format: uri
+          example: https://portfolio.vercel.app
+        status:
+          type: string
+          enum: [PENDING, APPROVED, REJECTED]
+          example: PENDING
+        createdAt:
+          type: string
+          example: "2026-10-20T11:00:00.000Z"
+
+    ProjectSummaryWithStudent:
+      allOf:
+        - $ref: '#/components/schemas/ProjectSummary'
+        - type: object
+          properties:
+            student:
+              $ref: '#/components/schemas/ProjectStudent'
+
+    ProjectMentor:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: e1234567-89ab-cdef-0123-456789abcdef
+        name:
+          type: string
+          example: Lead Mentor
+        email:
+          type: string
+          format: email
+          example: mentor@demo.com
+
+    ProjectWithDetails:
+      allOf:
+        - $ref: '#/components/schemas/Project'
+        - type: object
+          properties:
+            student:
+              $ref: '#/components/schemas/ProjectStudent'
+            reviewedBy:
+              $ref: '#/components/schemas/ProjectMentor'
+
     ProjectWithStudent:
       allOf:
         - $ref: '#/components/schemas/Project'
@@ -306,7 +365,7 @@ components:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/Project'
+            $ref: '#/components/schemas/ProjectSummary'
 
     PaginatedMentorProjectsResponse:
       type: object
@@ -325,7 +384,7 @@ components:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/ProjectWithStudent'
+            $ref: '#/components/schemas/ProjectSummaryWithStudent'
 
     # Mentor Stats
     MentorStats:

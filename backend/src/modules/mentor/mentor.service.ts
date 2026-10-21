@@ -46,6 +46,7 @@ const getProjects = async (query: IGetProjectsQuery) => {
   const [countResult, projects] = await Promise.all([
     collection.aggregate((a) => ({ count: a.count() })),
     collection
+      .select("id", "name", "repoUrl", "liveUrl", "status", "createdAt")
       .include("student", (student) => student.select("id", "name", "email"))
       .orderBy((p) => (isAsc ? p.createdAt.asc() : p.createdAt.desc()))
       .limit(limit)
@@ -70,6 +71,7 @@ const getProjects = async (query: IGetProjectsQuery) => {
 const getProjectById = async (id: string) => {
   const project = await db.orm.public.Project.where({ id })
     .include("student", (student) => student.select("id", "name", "email"))
+    .include("reviewedBy", (mentor) => mentor.select("id", "name", "email"))
     .first();
 
   if (!project) {

@@ -70,6 +70,7 @@ const getMyProjects = async (
   const [countResult, projects] = await Promise.all([
     collection.aggregate((a) => ({ count: a.count() })),
     collection
+      .select("id", "name", "repoUrl", "liveUrl", "status", "createdAt")
       .orderBy((p) => p.createdAt.desc())
       .limit(limit)
       .offset(offset)
@@ -93,6 +94,7 @@ const getMyProjects = async (
 const getProjectById = async (id: string, studentId: string) => {
   const project = await db.orm.public.Project
     .where({ id, studentId })
+    .include("reviewedBy", (mentor) => mentor.select("id", "name", "email"))
     .first();
 
   if (!project) {

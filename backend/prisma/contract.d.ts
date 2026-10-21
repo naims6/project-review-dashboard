@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'f3c9add1b049adaf7604bdb871d672f53f3f54b4a243ebc71fcaa872acef98e9'>;
+  StorageHashBase<'6431707f5dad608249175e5eaddbf59db8d5e37d147f8cb49d718d304862b96a'>;
 export type ExecutionHash =
   ExecutionHashBase<'3b184e32d7e01f962fb7c55724ee58b85508af976c90ce9bb61cfc7d7d989005'>;
 export type ProfileHash =
@@ -355,8 +355,9 @@ export namespace Models {
     status: 'PENDING' | 'APPROVED' | 'REJECTED';
     studentId: CodecTypes['pg/text@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    reviewedBy: public_User | null;
     student: public_User;
-    readonly [RelationKeys]?: 'student';
+    readonly [RelationKeys]?: 'reviewedBy' | 'student';
   };
   export type public_User = {
     createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
@@ -366,8 +367,9 @@ export namespace Models {
     password: CodecTypes['pg/text@1']['output'];
     role: 'STUDENT' | 'MENTOR' | 'ADMIN';
     updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
-    projects: public_Project[];
-    readonly [RelationKeys]?: 'projects';
+    reviewedProjects: public_Project[];
+    submittedProjects: public_Project[];
+    readonly [RelationKeys]?: 'reviewedProjects' | 'submittedProjects';
   };
 }
 
@@ -477,8 +479,14 @@ type ContractBase = Omit<
                 };
               };
               primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [];
+              uniques: readonly [{ readonly columns: readonly ['repoUrl'] }];
               indexes: readonly [
+                {
+                  readonly name: 'Project_reviewedById_idx_e2835478';
+                  readonly prefix: 'Project_reviewedById_idx';
+                  readonly columns: readonly ['reviewedById'];
+                  readonly unique: false;
+                },
                 {
                   readonly name: 'Project_status_createdAt_idx_58610442';
                   readonly prefix: 'Project_status_createdAt_idx';
@@ -504,6 +512,18 @@ type ContractBase = Omit<
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'Project';
                     readonly columns: readonly ['studentId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'User';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Project';
+                    readonly columns: readonly ['reviewedById'];
                   };
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
@@ -664,6 +684,15 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly reviewedBy: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['reviewedById'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
               readonly student: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
                 readonly cardinality: 'N:1';
@@ -731,7 +760,18 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
-              readonly projects: {
+              readonly reviewedProjects: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Project';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['reviewedById'];
+                };
+              };
+              readonly submittedProjects: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
                   readonly model: 'Project';

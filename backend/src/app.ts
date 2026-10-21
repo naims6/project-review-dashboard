@@ -10,10 +10,27 @@ import config from "./config/env.js";
 
 const app: Application = express();
 
+const allowedOrigins = [
+  config.frontend_url,
+  "http://localhost:3000",
+  "http://localhost:5000",
+  "https://project-review-dashboard.onrender.com",
+].filter(Boolean) as string[];
+
 app.use(
   cors({
-    origin: config.frontend_url || "http://localhost:3000",
-    credentials: true, 
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, Postman)
+      if (!origin) return callback(null, true);
+
+      const isAllowed = allowedOrigins.includes(origin);
+
+      if (isAllowed) {
+        return callback(null, true);
+      }
+      return callback(null, false);
+    },
+    credentials: true,
   }),
 );
 app.use(express.json());

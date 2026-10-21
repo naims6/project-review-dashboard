@@ -3,7 +3,7 @@ import { db } from "../../../prisma/db.js";
 import AppError from "../../utils/AppError.js";
 import {
   calculatePagination,
-  formatPaginationResult,
+  IPaginationMeta,
   IPaginationOptions,
 } from "../../utils/pagination.js";
 
@@ -76,7 +76,18 @@ const getMyProjects = async (
       .all(),
   ]);
 
-  return formatPaginationResult(projects, countResult.count, { page, limit });
+  const total = countResult.count;
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+      totalPages,
+    },
+    data: projects,
+  };
 };
 
 const getProjectById = async (id: string, studentId: string) => {

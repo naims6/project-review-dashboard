@@ -4,7 +4,7 @@ import { db } from "../../../prisma/db.js";
 import AppError from "../../utils/AppError.js";
 import {
   calculatePagination,
-  formatPaginationResult,
+  IPaginationMeta,
   IPaginationOptions,
 } from "../../utils/pagination.js";
 
@@ -27,11 +27,18 @@ const getProjects = async (query: IGetProjectsQuery) => {
   let collection = db.orm.public.Project;
 
   if (query.status) {
-    collection = collection.where((p) => p.status.eq(query.status!));
+    const normalizedStatus = query.status.toUpperCase();
+    if (["PENDING", "APPROVED", "REJECTED"].includes(normalizedStatus)) {
+      collection = collection.where((p) =>
+        p.status.eq(normalizedStatus as ProjectStatusType),
+      );
+    }
   }
 
   if (query.search?.trim()) {
-    collection = collection.where((p) => p.name.ilike(`%${query.search!.trim()}%`));
+    collection = collection.where((p) =>
+      p.name.ilike(`%${query.search!.trim()}%`),
+    );
   }
 
   const isAsc = query.sortOrder === "asc";
@@ -46,12 +53,22 @@ const getProjects = async (query: IGetProjectsQuery) => {
       .all(),
   ]);
 
-  return formatPaginationResult(projects, countResult.count, { page, limit });
+  const total = countResult.count;
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+      totalPages,
+    },
+    data: projects,
+  };
 };
 
 const getProjectById = async (id: string) => {
-  const project = await db.orm.public.Project
-    .where({ id })
+  const project = await db.orm.public.Project.where({ id })
     .include("student", (student) => student.select("id", "name", "email"))
     .first();
 
@@ -73,24 +90,22 @@ const reviewProject = async (
     throw new AppError(StatusCodes.NOT_FOUND, "Project not found");
   }
 
-  const updatedProject = await db.orm.public.Project
-    .where({ id })
-    .update({
-      status: payload.status,
-      reviewComment: payload.reviewComment ?? null,
-      reviewedById: mentorId,
-      reviewedAt: Temporal.Now.instant(),
-    });
+  const updatedProject = await db.orm.public.Project.where({ id }).update({
+    status: payload.status,
+    reviewComment: payload.reviewComment ?? null,
+    reviewedById: mentorId,
+    reviewedAt: Temporal.Now.instant(),
+  });
 
   return updatedProject;
 };
 
 const getMentorStats = async () => {
-  const stats = await db.orm.public.Project
-    .groupBy("status")
-    .aggregate((agg) => ({
+  const stats = await db.orm.public.Project.groupBy("status").aggregate(
+    (agg) => ({
       count: agg.count(),
-    }));
+    }),
+  );
 
   let pending = 0;
   let approved = 0;

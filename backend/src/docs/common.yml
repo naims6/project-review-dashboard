@@ -301,15 +301,12 @@ components:
         message:
           type: string
           example: Projects retrieved successfully
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
         data:
-          type: object
-          properties:
-            meta:
-              $ref: '#/components/schemas/PaginationMeta'
-            data:
-              type: array
-              items:
-                $ref: '#/components/schemas/Project'
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
 
     PaginatedMentorProjectsResponse:
       type: object
@@ -323,15 +320,12 @@ components:
         message:
           type: string
           example: Projects retrieved successfully
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
         data:
-          type: object
-          properties:
-            meta:
-              $ref: '#/components/schemas/PaginationMeta'
-            data:
-              type: array
-              items:
-                $ref: '#/components/schemas/ProjectWithStudent'
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectWithStudent'
 
     # Mentor Stats
     MentorStats:

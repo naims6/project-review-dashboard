@@ -14,7 +14,6 @@ const createRateLimiter = (
     max,
     message,
     windowMs,
-    keyGenerator,
     standardHeaders: "draft-8",
     legacyHeaders: false,
     handler: (
@@ -27,20 +26,19 @@ const createRateLimiter = (
 
 // Limiters
 export const globalLimiter = createRateLimiter(
-  150,
+  100,
   "Too many requests, please try again later.",
   15 * 60 * 1000,
 );
 
 export const authLimiter = createRateLimiter(
-  20,
+  10,
   "Too many authentication attempts, please try again later.",
   15 * 60 * 1000,
 );
 
 export const submissionLimiter = createRateLimiter(
-  15,
+  10,
   "Too many submissions, please try again in a few minutes.",
   15 * 60 * 1000, // 15 minute window
-  (req: Request) => req.user?.id || req.ip || "unknown",
 );

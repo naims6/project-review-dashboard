@@ -1,17 +1,18 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import catchAsync from "../../utils/catchAsync.js";
-import sendResponse from "../../utils/sendResponse.js";
+import sendResponse, { sendPaginatedResponse } from "../../utils/sendResponse.js";
 import { MentorService } from "./mentor.service.js";
 
 const getProjects = catchAsync(async (req: Request, res: Response) => {
   const result = await MentorService.getProjects(req.query);
 
-  sendResponse(res, {
+  sendPaginatedResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
     message: "Projects retrieved successfully",
-    data: result,
+    meta: result.meta,
+    data: result.data,
   });
 });
 

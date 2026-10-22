@@ -2,15 +2,44 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useRouter } from "next/navigation";
+import { login } from "@/services/auth.service";
+
+// ── Schema ────────────────────────────────────────────────────────────────────
+
+const schema = z.object({
+  email: z.string().email("Enter a valid email address"),
+  password: z.string().min(1, "Password is required"),
+});
+
+type LoginForm = z.infer<typeof schema>;
+
+// ── Component ─────────────────────────────────────────────────────────────────
 
 export default function LoginPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setTimeout(() => setLoading(false), 1200);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginForm>({ resolver: zodResolver(schema) });
+
+  const onSubmit = async (data: LoginForm) => {
+    setServerError(null);
+    try {
+      await login(data);
+      router.push("/dashboard");
+    } catch (err) {
+      setServerError(
+        err instanceof Error ? err.message : "Something went wrong. Please try again.",
+      );
+    }
   };
 
   return (
@@ -32,15 +61,19 @@ export default function LoginPage() {
         </h1>
         <p className="text-[14px] text-white/35 mb-8">
           Don&apos;t have an account?{" "}
-          <Link
-            href="/signup"
-            className="text-violet-400 hover:text-violet-300 transition-colors"
-          >
+          <Link href="/signup" className="text-violet-400 hover:text-violet-300 transition-colors">
             Sign up
           </Link>
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Server error banner */}
+        {serverError && (
+          <div className="mb-5 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-[13px] text-red-400">
+            {serverError}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
           {/* Email */}
           <div>
             <label className="block text-[12px] font-medium text-white/40 uppercase tracking-wider mb-2">
@@ -49,9 +82,12 @@ export default function LoginPage() {
             <input
               type="email"
               placeholder="you@example.com"
-              required
+              {...register("email")}
               className="w-full px-4 py-2.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[14px] placeholder:text-white/20 focus:outline-none focus:border-violet-500/50 focus:bg-white/[0.06] transition-all"
             />
+            {errors.email && (
+              <p className="mt-1.5 text-[12px] text-red-400">{errors.email.message}</p>
+            )}
           </div>
 
           {/* Password */}
@@ -60,10 +96,7 @@ export default function LoginPage() {
               <label className="block text-[12px] font-medium text-white/40 uppercase tracking-wider">
                 Password
               </label>
-              <a
-                href="#"
-                className="text-[12px] text-white/30 hover:text-violet-400 transition-colors"
-              >
+              <a href="#" className="text-[12px] text-white/30 hover:text-violet-400 transition-colors">
                 Forgot?
               </a>
             </div>
@@ -71,20 +104,23 @@ export default function LoginPage() {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
-                required
+                {...register("password")}
                 className="w-full px-4 py-2.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[14px] placeholder:text-white/20 focus:outline-none focus:border-violet-500/50 focus:bg-white/[0.06] transition-all pr-12"
               />
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() => setShowPassword((v) => !v)}
                 className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-medium text-white/25 hover:text-white/50 transition-colors"
               >
                 {showPassword ? "HIDE" : "SHOW"}
               </button>
             </div>
+            {errors.password && (
+              <p className="mt-1.5 text-[12px] text-red-400">{errors.password.message}</p>
+            )}
           </div>
 
-          {/* Remember */}
+          {/* Remember me */}
           <label className="flex items-center gap-2.5 cursor-pointer select-none pt-1">
             <input
               type="checkbox"
@@ -96,10 +132,10 @@ export default function LoginPage() {
           {/* Submit */}
           <button
             type="submit"
-            disabled={loading}
+            disabled={isSubmitting}
             className="w-full py-2.5 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-[14px] font-semibold rounded-lg transition-colors mt-2"
           >
-            {loading ? "Signing in…" : "Sign in"}
+            {isSubmitting ? "Signing in…" : "Sign in"}
           </button>
         </form>
       </div>

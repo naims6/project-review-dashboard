@@ -1,9 +1,9 @@
-const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api/v1";
+const BASE = `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"}/api/v1`;
 
 export const endpoints = {
   auth: {
+    signup:       `${BASE}/auth/signup`,
     login:        `${BASE}/auth/login`,
-    register:     `${BASE}/auth/register`,
     logout:       `${BASE}/auth/logout`,
     me:           `${BASE}/auth/me`,
     refreshToken: `${BASE}/auth/refresh-token`,

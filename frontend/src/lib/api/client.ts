@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { endpoints } from "./endpoints";
-import { ApiError, type ApiResponse } from "./types";
+import { ApiError } from "./types";
 
 type HttpMethod = "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
 
@@ -107,7 +107,10 @@ async function request<TResponse, TBody = unknown>(
   if (!res.ok) throw await parseError(res);
   if (res.status === 204) return undefined as TResponse;
 
-  const json: ApiResponse<TResponse> = await res.json();
+  const json: any = await res.json();
+  if (json && typeof json === "object" && "meta" in json && "data" in json) {
+    return { data: json.data, meta: json.meta } as TResponse;
+  }
   return json.data ?? (json as TResponse);
 }
 

@@ -1,21 +1,32 @@
-const BASE = `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000"}/api/v1`;
+const RAW_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
+const BASE = RAW_BASE.endsWith("/api/v1")
+  ? RAW_BASE
+  : `${RAW_BASE.replace(/\/$/, "")}/api/v1`;
 
 export const endpoints = {
   auth: {
-    signup:       `${BASE}/auth/signup`,
-    login:        `${BASE}/auth/login`,
-    logout:       `${BASE}/auth/logout`,
-    me:           `${BASE}/auth/me`,
+    signup: `${BASE}/auth/signup`,
+    login: `${BASE}/auth/login`,
+    logout: `${BASE}/auth/logout`,
+    me: `${BASE}/auth/me`,
     refreshToken: `${BASE}/auth/refresh-token`,
   },
 
-  users: {
-    list:   `${BASE}/users`,
-    detail: (id: string) => `${BASE}/users/${id}`,
-    create: `${BASE}/users`,
-    update: (id: string) => `${BASE}/users/${id}`,
-    delete: (id: string) => `${BASE}/users/${id}`,
+  mentor: {
+    projects: `${BASE}/mentor/projects`,
+    projectDetail: (id: string) => `${BASE}/mentor/projects/${id}`,
+    reviewProject: (id: string) => `${BASE}/mentor/projects/${id}/review`,
+    stats: `${BASE}/mentor/stats`,
   },
 
-  // Add more resources here following the same pattern
+  admin: {
+    users: `${BASE}/admin/users`,
+    createUser: `${BASE}/admin/users`,
+  },
+  
+  projects: {
+    submit: `${BASE}/projects`,
+    myProjects: `${BASE}/projects/me`,
+    detail: (id: string) => `${BASE}/projects/${id}`,
+  },
 } as const;

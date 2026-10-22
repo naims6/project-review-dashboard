@@ -11,9 +11,13 @@ import type {
   User,
 } from "@/types/auth";
 
-/** POST /auth/signup - Register new student */
-export async function signup(payload: SignupPayload): Promise<User> {
-  return await api.post<User, SignupPayload>(endpoints.auth.signup, payload);
+/** POST /auth/signup - Register new student and automatically log them in */
+export async function signup(payload: SignupPayload): Promise<LoginResponse> {
+  await api.post<User, SignupPayload>(endpoints.auth.signup, payload);
+  return await login({
+    email: payload.email,
+    password: payload.password,
+  });
 }
 
 /** POST /auth/login - Logs in user and sets HTTP-only cookies in Next.js store */

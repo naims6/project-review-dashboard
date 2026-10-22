@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import type { User } from "@/types/auth";
 import type { MentorProjectItem, MentorStats } from "@/types/mentor";
 import { getMentorStats, getMentorProjects } from "@/services/mentor.service";
@@ -23,12 +24,11 @@ import {
 
 interface OverviewViewProps {
   user: User;
-  onNavigateTab: (tab: string) => void;
 }
 
-// ── Student overview — simple welcome + CTA, no mentor API calls ─────────────
+// ── Student overview — simple welcome + how-it-works, no mentor API calls ─────
 
-function StudentOverview({ user, onNavigateTab }: OverviewViewProps) {
+function StudentOverview({ user }: OverviewViewProps) {
   return (
     <div className="space-y-6">
       <div className="pb-4 border-b border-white/[0.06]">
@@ -58,13 +58,12 @@ function StudentOverview({ user, onNavigateTab }: OverviewViewProps) {
               feedback in the Projects tab.
             </p>
           </div>
-          <Button
-            onClick={() => onNavigateTab("projects")}
-            className="bg-violet-600 hover:bg-violet-500 text-white font-medium text-xs h-9 gap-1.5 shadow-lg shadow-violet-600/20 shrink-0"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            Go to My Projects
-          </Button>
+          <Link href="/dashboard/my-projects">
+            <Button className="bg-violet-600 hover:bg-violet-500 text-white font-medium text-xs h-9 gap-1.5 shadow-lg shadow-violet-600/20 shrink-0">
+              <Sparkles className="w-3.5 h-3.5" />
+              Go to My Projects
+            </Button>
+          </Link>
         </div>
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-violet-600/10 rounded-full blur-3xl pointer-events-none" />
       </div>
@@ -100,12 +99,12 @@ function StudentOverview({ user, onNavigateTab }: OverviewViewProps) {
                 <p className="text-sm font-semibold text-white/90">{step.label}</p>
                 <p className="text-xs text-white/40 mt-0.5">{step.desc}</p>
               </div>
-              <button
-                onClick={() => onNavigateTab("projects")}
-                className="text-[11px] text-violet-400 hover:text-violet-300 transition-colors text-left flex items-center gap-1"
+              <Link
+                href="/dashboard/my-projects"
+                className="text-[11px] text-violet-400 hover:text-violet-300 transition-colors flex items-center gap-1"
               >
                 Open Projects <ArrowRight className="w-3 h-3" />
-              </button>
+              </Link>
             </CardContent>
           </Card>
         ))}
@@ -114,18 +113,18 @@ function StudentOverview({ user, onNavigateTab }: OverviewViewProps) {
   );
 }
 
-// ── Main export — routes students before any mentor API calls ────────────────
+// ── Main export — routes students away before any mentor API calls ─────────────
 
-export function OverviewView({ user, onNavigateTab }: OverviewViewProps) {
+export function OverviewView({ user }: OverviewViewProps) {
   if (user.role === "STUDENT") {
-    return <StudentOverview user={user} onNavigateTab={onNavigateTab} />;
+    return <StudentOverview user={user} />;
   }
-  return <MentorAdminOverview user={user} onNavigateTab={onNavigateTab} />;
+  return <MentorAdminOverview user={user} />;
 }
 
-// ── Mentor / Admin overview (original implementation) ───────────────────────
+// ── Mentor / Admin overview ───────────────────────────────────────────────────
 
-function MentorAdminOverview({ user, onNavigateTab }: OverviewViewProps) {
+function MentorAdminOverview({ user }: OverviewViewProps) {
   const [stats, setStats] = useState<MentorStats>({
     total: 0,
     pending: 0,
@@ -199,26 +198,28 @@ function MentorAdminOverview({ user, onNavigateTab }: OverviewViewProps) {
 
         <div className="flex items-center gap-2">
           {user.role === "ADMIN" && (
-            <Button
-              size="sm"
-              onClick={() => onNavigateTab("users")}
-              className="bg-violet-600 hover:bg-violet-500 text-white text-xs h-8 gap-1.5"
-            >
-              <Users className="w-3.5 h-3.5" />
-              Users
-            </Button>
+            <Link href="/dashboard/users">
+              <Button
+                size="sm"
+                className="bg-violet-600 hover:bg-violet-500 text-white text-xs h-8 gap-1.5"
+              >
+                <Users className="w-3.5 h-3.5" />
+                Users
+              </Button>
+            </Link>
           )}
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onNavigateTab("projects")}
-            className="border-white/[0.1] bg-white/[0.02] text-white/80 hover:text-white hover:bg-white/[0.05] text-xs h-8 gap-1.5"
-          >
-            <FolderGit2 className="w-3.5 h-3.5" />
-            Projects
-            <ArrowRight className="w-3 h-3 text-white/40" />
-          </Button>
+          <Link href="/dashboard/projects">
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-white/[0.1] bg-white/[0.02] text-white/80 hover:text-white hover:bg-white/[0.05] text-xs h-8 gap-1.5"
+            >
+              <FolderGit2 className="w-3.5 h-3.5" />
+              Projects
+              <ArrowRight className="w-3 h-3 text-white/40" />
+            </Button>
+          </Link>
         </div>
       </div>
 
@@ -261,7 +262,7 @@ function MentorAdminOverview({ user, onNavigateTab }: OverviewViewProps) {
           </CardContent>
         </Card>
 
-        {/* Approved Submissions */}
+        {/* Approved */}
         <Card className="border-emerald-500/20 bg-emerald-500/[0.03] hover:bg-emerald-500/[0.06] transition-all hover:border-emerald-500/40">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-3">
@@ -281,7 +282,7 @@ function MentorAdminOverview({ user, onNavigateTab }: OverviewViewProps) {
           </CardContent>
         </Card>
 
-        {/* Rejected Submissions */}
+        {/* Rejected */}
         <Card className="border-rose-500/20 bg-rose-500/[0.03] hover:bg-rose-500/[0.06] transition-all hover:border-rose-500/40">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-3">
@@ -322,16 +323,12 @@ function MentorAdminOverview({ user, onNavigateTab }: OverviewViewProps) {
             <div className="w-full h-2 rounded-full bg-white/[0.06] overflow-hidden flex">
               <div
                 className="h-full bg-emerald-500 transition-all duration-500"
-                style={{
-                  width: `${stats.total > 0 ? (stats.approved / stats.total) * 100 : 0}%`,
-                }}
+                style={{ width: `${stats.total > 0 ? (stats.approved / stats.total) * 100 : 0}%` }}
                 title={`Approved: ${stats.approved}`}
               />
               <div
                 className="h-full bg-rose-500 transition-all duration-500"
-                style={{
-                  width: `${stats.total > 0 ? (stats.rejected / stats.total) * 100 : 0}%`,
-                }}
+                style={{ width: `${stats.total > 0 ? (stats.rejected / stats.total) * 100 : 0}%` }}
                 title={`Rejected: ${stats.rejected}`}
               />
             </div>
@@ -343,15 +340,16 @@ function MentorAdminOverview({ user, onNavigateTab }: OverviewViewProps) {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-white">Recent Projects</h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onNavigateTab("projects")}
-            className="text-xs text-white/50 hover:text-white h-7 gap-1"
-          >
-            View all
-            <ArrowRight className="w-3 h-3" />
-          </Button>
+          <Link href="/dashboard/projects">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs text-white/50 hover:text-white h-7 gap-1"
+            >
+              View all
+              <ArrowRight className="w-3 h-3" />
+            </Button>
+          </Link>
         </div>
 
         {isLoading ? (
@@ -421,12 +419,12 @@ function MentorAdminOverview({ user, onNavigateTab }: OverviewViewProps) {
                       )}
                     </div>
 
-                    <button
-                      onClick={() => onNavigateTab("projects")}
+                    <Link
+                      href="/dashboard/projects"
                       className="text-[11px] text-violet-400 hover:text-violet-300 transition-colors"
                     >
-                      Review &rarr;
-                    </button>
+                      Review →
+                    </Link>
                   </div>
                 </CardContent>
               </Card>

@@ -1,7 +1,8 @@
 "use client";
 
-import type { User } from "@/types/auth";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
+import type { User } from "@/types/auth";
 import {
   Sidebar,
   SidebarContent,
@@ -27,85 +28,57 @@ import {
 
 interface DashboardSidebarProps {
   user: User;
-  activeTab: string;
-  onTabChange: (tab: string) => void;
 }
 
 interface NavItem {
-  id: string;
   label: string;
+  href: string;
   icon: React.ComponentType<{ className?: string }>;
 }
 
-export function DashboardSidebar({
-  user,
-  activeTab,
-  onTabChange,
-}: DashboardSidebarProps) {
-  const getNavItems = (): NavItem[] => {
-    const items: NavItem[] = [
-      {
-        id: "overview",
-        label: "Overview",
-        icon: LayoutDashboard,
-      },
-    ];
+function getNavItems(role: User["role"]): NavItem[] {
+  const items: NavItem[] = [
+    { label: "Overview", href: "/dashboard/overview", icon: LayoutDashboard },
+  ];
 
-    if (user.role === "ADMIN") {
-      items.push(
-        {
-          id: "users",
-          label: "Users",
-          icon: Users,
-        },
-        {
-          id: "projects",
-          label: "Projects",
-          icon: FolderGit2,
-        },
-      );
-    } else if (user.role === "MENTOR") {
-      items.push({
-        id: "projects",
-        label: "Projects",
-        icon: FolderGit2,
-      });
-    } else {
-      items.push({
-        id: "projects",
-        label: "My Projects",
-        icon: FolderGit2,
-      });
-    }
+  if (role === "ADMIN") {
+    items.push(
+      { label: "Projects", href: "/dashboard/projects", icon: FolderGit2 },
+      { label: "Users", href: "/dashboard/users", icon: Users },
+    );
+  } else if (role === "MENTOR") {
+    items.push({ label: "Projects", href: "/dashboard/projects", icon: FolderGit2 });
+  } else {
+    // STUDENT
+    items.push({ label: "My Projects", href: "/dashboard/my-projects", icon: FolderGit2 });
+  }
 
-    items.push({
-      id: "profile",
-      label: "Profile",
-      icon: UserCircle2,
-    });
+  items.push({ label: "Profile", href: "/dashboard/profile", icon: UserCircle2 });
 
-    return items;
-  };
+  return items;
+}
 
-  const navItems = getNavItems();
+function getRoleBadgeStyle(role: string) {
+  switch (role) {
+    case "ADMIN":
+      return "border-violet-500/40 text-violet-300 bg-violet-500/10";
+    case "MENTOR":
+      return "border-cyan-500/40 text-cyan-300 bg-cyan-500/10";
+    default:
+      return "border-emerald-500/40 text-emerald-300 bg-emerald-500/10";
+  }
+}
 
-  const getRoleBadgeStyle = (role: string) => {
-    switch (role) {
-      case "ADMIN":
-        return "border-violet-500/40 text-violet-300 bg-violet-500/10";
-      case "MENTOR":
-        return "border-cyan-500/40 text-cyan-300 bg-cyan-500/10";
-      default:
-        return "border-emerald-500/40 text-emerald-300 bg-emerald-500/10";
-    }
-  };
+export function DashboardSidebar({ user }: DashboardSidebarProps) {
+  const pathname = usePathname();
+  const navItems = getNavItems(user.role);
 
   return (
     <Sidebar
       collapsible="icon"
       className="border-r border-white/[0.06] bg-[#0a0a0f] text-white"
     >
-      {/* ── Brand Header (Matching Navbar logo) ── */}
+      {/* ── Brand Header ── */}
       <SidebarHeader className="border-b border-white/[0.06] h-14 px-5 flex items-center justify-center">
         <div className="flex items-center w-full">
           <Link
@@ -124,13 +97,13 @@ export function DashboardSidebar({
             <SidebarMenu className="gap-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
-                const isActive = activeTab === item.id;
+                const isActive = pathname === item.href;
 
                 return (
-                  <SidebarMenuItem key={item.id}>
+                  <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
+                      render={<Link href={item.href} />}
                       isActive={isActive}
-                      onClick={() => onTabChange(item.id)}
                       tooltip={item.label}
                       className={`w-full justify-start gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
                         isActive
@@ -172,9 +145,7 @@ export function DashboardSidebar({
               </p>
               <Badge
                 variant="outline"
-                className={`mt-1 text-[9px] uppercase font-bold tracking-wider py-0 px-1.5 ${getRoleBadgeStyle(
-                  user.role,
-                )}`}
+                className={`mt-1 text-[9px] uppercase font-bold tracking-wider py-0 px-1.5 ${getRoleBadgeStyle(user.role)}`}
               >
                 {user.role}
               </Badge>

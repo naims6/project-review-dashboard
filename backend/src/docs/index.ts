@@ -19,6 +19,7 @@ const commonDoc = loadYaml("common.yml");
 const authDoc = loadYaml("auth.yml");
 const projectDoc = loadYaml("projects.yml");
 const mentorDoc = loadYaml("mentor.yml");
+const adminDoc = loadYaml("admin.yml");
 
 export const swaggerDocument = {
   ...baseDoc,
@@ -35,6 +36,7 @@ export const swaggerDocument = {
       ...authDoc.components?.schemas,
       ...projectDoc.components?.schemas,
       ...mentorDoc.components?.schemas,
+      ...adminDoc.components?.schemas,
     },
     responses: {
       ...baseDoc.components?.responses,
@@ -42,12 +44,14 @@ export const swaggerDocument = {
       ...authDoc.components?.responses,
       ...projectDoc.components?.responses,
       ...mentorDoc.components?.responses,
+      ...adminDoc.components?.responses,
     },
   },
   paths: {
     ...authDoc.paths,
     ...projectDoc.paths,
     ...mentorDoc.paths,
+    ...adminDoc.paths,
   },
 };
 

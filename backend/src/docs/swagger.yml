@@ -15,3 +15,5 @@ tags:
     description: Student project submissions and management
   - name: Mentor
     description: Mentor project reviews, status filters, and statistics
+  - name: Admin
+    description: Admin operations including student and mentor creation

@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { IPaginationOptions } from "../../utils/pagination.js";
+import { UserRole } from "../../types/index.js";
 
 const createUserValidationSchema = z.object({
   name: z
@@ -17,6 +19,15 @@ const createUserValidationSchema = z.object({
     error: "Role must be either STUDENT or MENTOR",
   }),
 });
+
+export type UserSortField = "createdAt" | "name" | "email" | "role";
+
+export interface IGetUsersQuery extends IPaginationOptions {
+  search?: string;
+  role?: UserRole;
+  sortBy?: UserSortField;
+  sortOrder?: "asc" | "desc";
+}
 
 type ICreateUserPayload = z.infer<typeof createUserValidationSchema>;
 

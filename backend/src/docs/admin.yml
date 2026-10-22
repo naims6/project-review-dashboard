@@ -1,5 +1,64 @@
 paths:
   /api/v1/admin/users:
+    get:
+      tags:
+        - Admin
+      summary: List all users with pagination, search, and filter (Admin)
+      description: Returns a paginated list of all users. Supports searching by name or email, filtering by role (STUDENT, MENTOR, ADMIN), and custom sorting.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+          description: Items per page
+        - name: role
+          in: query
+          schema:
+            type: string
+            enum: [STUDENT, MENTOR, ADMIN]
+          description: Filter by user role
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search by name or email (case-insensitive substring)
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            enum: [createdAt, name, email, role]
+            default: createdAt
+          description: Field to sort by
+        - name: sortOrder
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+          description: Sort direction (asc for ascending, desc for descending)
+      responses:
+        200:
+          description: Users retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUsersResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+
     post:
       tags:
         - Admin

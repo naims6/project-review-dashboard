@@ -411,6 +411,25 @@ components:
           items:
             $ref: '#/components/schemas/ProjectSummaryWithStudent'
 
+    PaginatedUsersResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        statusCode:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Users retrieved successfully
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+
     # Mentor Stats
     MentorStats:
       type: object

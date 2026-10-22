@@ -10,6 +10,8 @@ const router: Router = Router();
 // Protect all admin routes with authentication and ADMIN role
 router.use(isAuthenticated, authorize("ADMIN"));
 
+router.get("/users", AdminController.getAllUsers);
+
 router.post(
   "/users",
   validateRequest(AdminValidation.createUserValidationSchema),

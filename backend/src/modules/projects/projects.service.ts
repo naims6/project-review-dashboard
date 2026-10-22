@@ -70,7 +70,17 @@ const getMyProjects = async (
   const [countResult, projects] = await Promise.all([
     collection.aggregate((a) => ({ count: a.count() })),
     collection
-      .select("id", "name", "repoUrl", "liveUrl", "status", "createdAt")
+      .select(
+        "id",
+        "name",
+        "repoUrl",
+        "liveUrl",
+        "description",
+        "status",
+        "reviewComment",
+        "reviewedAt",
+        "createdAt",
+      )
       .orderBy((p) => p.createdAt.desc())
       .limit(limit)
       .offset(offset)

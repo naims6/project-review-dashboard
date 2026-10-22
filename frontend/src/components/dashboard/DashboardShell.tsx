@@ -11,6 +11,7 @@ import { DashboardSidebar } from "./DashboardSidebar";
 import { OverviewView } from "./OverviewView";
 import { AdminDashboardView } from "./AdminDashboardView";
 import { MentorDashboardView } from "./MentorDashboardView";
+import { StudentDashboardView } from "./StudentDashboardView";
 import { ProfileView } from "./ProfileView";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -98,7 +99,12 @@ export function DashboardShell({ user }: DashboardShellProps) {
 
             {activeTab === "users" && <AdminDashboardView />}
 
-            {activeTab === "projects" && <MentorDashboardView />}
+            {activeTab === "projects" &&
+              (user.role === "STUDENT" ? (
+                <StudentDashboardView user={user} />
+              ) : (
+                <MentorDashboardView />
+              ))}
 
             {activeTab === "profile" && <ProfileView user={user} />}
           </main>

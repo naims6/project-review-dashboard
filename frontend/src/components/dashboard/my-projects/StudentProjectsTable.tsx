@@ -16,6 +16,7 @@ import {
   Loader2,
   MessageSquare,
   Plus,
+  Eye,
 } from "lucide-react";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { Pagination } from "@/components/shared/Pagination";
@@ -30,6 +31,7 @@ interface StudentProjectsTableProps {
   totalPages: number;
   onPageChange: (newPage: number) => void;
   onOpenSubmitModal: () => void;
+  onViewProject: (id: string) => void;
 }
 
 export function StudentProjectsTable({
@@ -40,6 +42,7 @@ export function StudentProjectsTable({
   totalPages,
   onPageChange,
   onOpenSubmitModal,
+  onViewProject,
 }: StudentProjectsTableProps) {
   return (
     <div className="rounded-xl border border-white/[0.07] bg-[#0d0d14] overflow-hidden">
@@ -73,13 +76,16 @@ export function StudentProjectsTable({
             <TableHead className="text-white/35 font-semibold text-[10px] uppercase tracking-wider py-2.5 px-4">
               Mentor Feedback
             </TableHead>
+            <TableHead className="text-white/35 font-semibold text-[10px] uppercase tracking-wider py-2.5 px-4 text-right">
+              
+            </TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell colSpan={5} className="h-40 text-center border-0">
+              <TableCell colSpan={6} className="h-40 text-center border-0">
                 <div className="flex flex-col items-center justify-center gap-2">
                   <Loader2 className="w-5 h-5 animate-spin text-violet-400" />
                   <span className="text-xs text-white/30">Loading projects…</span>
@@ -88,7 +94,7 @@ export function StudentProjectsTable({
             </TableRow>
           ) : projects.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={5} className="h-52 text-center border-0">
+              <TableCell colSpan={6} className="h-52 text-center border-0">
                 <div className="flex flex-col items-center justify-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center">
                     <FolderGit2 className="w-5 h-5 text-white/20" />
@@ -198,6 +204,19 @@ export function StudentProjectsTable({
                       {proj.status === "PENDING" ? "Awaiting review…" : "No comment"}
                     </span>
                   )}
+                </TableCell>
+
+                {/* View button */}
+                <TableCell className="py-3.5 px-4 text-right">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => onViewProject(proj.id)}
+                    className="h-7 px-3 text-xs text-white/40 hover:text-white hover:bg-white/[0.06] gap-1.5"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    View
+                  </Button>
                 </TableCell>
               </TableRow>
             ))

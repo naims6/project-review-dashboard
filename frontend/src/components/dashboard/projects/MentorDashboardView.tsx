@@ -5,6 +5,7 @@ import { useMentorProjects, useMentorStats } from "@/hooks/queries/use-mentor-qu
 import type { MentorProjectItem, ProjectStatus } from "@/types/mentor";
 import { ReviewProjectModal } from "./ReviewProjectModal";
 import { ProjectsTable } from "./ProjectsTable";
+import { ProjectDetailModal } from "@/components/shared/ProjectDetailModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, ArrowUpDown } from "lucide-react";
@@ -17,6 +18,7 @@ export function MentorDashboardView() {
 
   const [selectedProject, setSelectedProject] = useState<MentorProjectItem | null>(null);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [selectedDetailId, setSelectedDetailId] = useState<string | null>(null);
 
   const { data: stats } = useMentorStats();
   const { data, isLoading } = useMentorProjects({
@@ -127,12 +129,19 @@ export function MentorDashboardView() {
         search={search}
         onPageChange={setPage}
         onOpenReview={handleOpenReview}
+        onViewProject={setSelectedDetailId}
       />
 
       <ReviewProjectModal
         project={selectedProject}
         isOpen={isReviewOpen}
         onClose={() => setIsReviewOpen(false)}
+      />
+
+      <ProjectDetailModal
+        projectId={selectedDetailId}
+        role="MENTOR"
+        onClose={() => setSelectedDetailId(null)}
       />
     </div>
   );

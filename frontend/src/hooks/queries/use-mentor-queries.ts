@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getMentorProjects,
+  getMentorProjectById,
   getMentorStats,
   reviewProject,
 } from "@/services/mentor.service";
@@ -22,7 +23,15 @@ export function useMentorProjects(query: MentorProjectsQuery) {
   return useQuery({
     queryKey: queryKeys.mentorProjects(query),
     queryFn: () => getMentorProjects(query),
-    placeholderData: (prev) => prev, // keep old data visible while fetching next page/filter
+    placeholderData: (prev) => prev,
+  });
+}
+
+export function useMentorProjectDetail(id: string | null) {
+  return useQuery({
+    queryKey: queryKeys.mentorProjectDetail(id ?? ""),
+    queryFn: () => getMentorProjectById(id!),
+    enabled: !!id,
   });
 }
 

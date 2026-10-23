@@ -5,6 +5,7 @@ import type { User as AuthUser } from "@/types/auth";
 import { useMyProjects } from "@/hooks/queries/use-student-queries";
 import { SubmitProjectModal } from "./SubmitProjectModal";
 import { StudentProjectsTable } from "./StudentProjectsTable";
+import { ProjectDetailModal } from "@/components/shared/ProjectDetailModal";
 import { Button } from "@/components/ui/button";
 import {
   FolderGit2,
@@ -64,6 +65,7 @@ const STAT_CARDS = [
 export function StudentDashboardView({ user }: StudentDashboardViewProps) {
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
   const { data, isLoading } = useMyProjects({ page, limit: 10 });
 
@@ -142,11 +144,18 @@ export function StudentDashboardView({ user }: StudentDashboardViewProps) {
         totalPages={totalPages}
         onPageChange={setPage}
         onOpenSubmitModal={() => setIsModalOpen(true)}
+        onViewProject={setSelectedProjectId}
       />
 
       <SubmitProjectModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+      />
+
+      <ProjectDetailModal
+        projectId={selectedProjectId}
+        role="STUDENT"
+        onClose={() => setSelectedProjectId(null)}
       />
     </div>
   );

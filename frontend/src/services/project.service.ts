@@ -6,6 +6,7 @@ import type { PaginatedResponse } from "@/lib/api/types";
 import type {
   CreateProjectPayload,
   MyProjectsQuery,
+  StudentProjectDetail,
   StudentProjectItem,
 } from "@/types/project";
 
@@ -32,6 +33,14 @@ export async function getMyProjects(
 
   return await api.get<PaginatedResponse<StudentProjectItem>>(url, {
     tags: ["my-projects"],
+    revalidate: 0,
+  });
+}
+
+/** GET /projects/:id – Full detail of a single project (student view) */
+export async function getProjectById(id: string): Promise<StudentProjectDetail> {
+  return await api.get<StudentProjectDetail>(endpoints.projects.detail(id), {
+    tags: [`project-${id}`],
     revalidate: 0,
   });
 }

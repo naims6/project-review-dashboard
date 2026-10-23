@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getMyProjects, submitProject } from "@/services/project.service";
+import { getMyProjects, submitProject, getProjectById } from "@/services/project.service";
 import { queryKeys } from "@/lib/query-keys";
 import type { CreateProjectPayload, MyProjectsQuery } from "@/types/project";
 
@@ -12,6 +12,14 @@ export function useMyProjects(query: MyProjectsQuery) {
     queryKey: queryKeys.myProjects(query),
     queryFn: () => getMyProjects(query),
     placeholderData: (prev) => prev,
+  });
+}
+
+export function useProjectDetail(id: string | null) {
+  return useQuery({
+    queryKey: ["projects", "detail", id],
+    queryFn: () => getProjectById(id!),
+    enabled: !!id,
   });
 }
 

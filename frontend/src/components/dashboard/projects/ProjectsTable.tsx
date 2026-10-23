@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ExternalLink, GitBranch, Loader2 } from "lucide-react";
+import { ExternalLink, GitBranch, Loader2, Eye } from "lucide-react";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { Pagination } from "@/components/shared/Pagination";
 import { formatDate } from "@/lib/formatDate";
@@ -24,6 +24,7 @@ interface ProjectsTableProps {
   search: string;
   onPageChange: (newPage: number) => void;
   onOpenReview: (project: MentorProjectItem) => void;
+  onViewProject: (id: string) => void;
 }
 
 export function ProjectsTable({
@@ -35,6 +36,7 @@ export function ProjectsTable({
   search,
   onPageChange,
   onOpenReview,
+  onViewProject,
 }: ProjectsTableProps) {
   return (
     <div className="rounded-xl border border-white/[0.08] bg-[#111118]/80 overflow-hidden">
@@ -138,18 +140,29 @@ export function ProjectsTable({
                 </TableCell>
 
                 <TableCell className="py-3 px-4 text-right">
-                  <Button
-                    variant={proj.status === "PENDING" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => onOpenReview(proj)}
-                    className={
-                      proj.status === "PENDING"
-                        ? "bg-violet-600 hover:bg-violet-500 text-white text-xs h-7 px-3"
-                        : "border-white/[0.08] bg-white/[0.02] text-white/70 hover:text-white text-xs h-7 px-3"
-                    }
-                  >
-                    {proj.status === "PENDING" ? "Review" : "Update"}
-                  </Button>
+                  <div className="flex items-center justify-end gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onViewProject(proj.id)}
+                      className="h-7 px-2.5 text-xs text-white/40 hover:text-white hover:bg-white/[0.06] gap-1.5"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      View
+                    </Button>
+                    <Button
+                      variant={proj.status === "PENDING" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => onOpenReview(proj)}
+                      className={
+                        proj.status === "PENDING"
+                          ? "bg-violet-600 hover:bg-violet-500 text-white text-xs h-7 px-3"
+                          : "border-white/[0.08] bg-white/[0.02] text-white/70 hover:text-white text-xs h-7 px-3"
+                      }
+                    >
+                      {proj.status === "PENDING" ? "Review" : "Update"}
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))

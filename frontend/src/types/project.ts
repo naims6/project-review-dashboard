@@ -13,6 +13,20 @@ export interface StudentProjectItem {
   createdAt: string;
 }
 
+/** Full detail returned by GET /projects/:id (student view) */
+export interface StudentProjectDetail {
+  id: string;
+  name: string;
+  repoUrl: string;
+  liveUrl: string;
+  description: string;
+  status: ProjectStatus;
+  reviewComment: string | null;
+  reviewedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 /** Payload for creating / submitting a project */
 export interface CreateProjectPayload {
   name: string;

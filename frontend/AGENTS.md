@@ -101,16 +101,6 @@ Send `Authorization: Bearer <token>` on all protected routes.
 ## Form Validation ⚠️ Strict Rule
 
 > **Every single form in this project must be built with `react-hook-form` and validated with a `zod` schema. Direct `useState` form handling or manual validation is NOT allowed.**
-
-### Schemas to implement
-
-| Form              | Fields & rules                                                                                         |
-|-------------------|--------------------------------------------------------------------------------------------------------|
-| **Login**         | `email` — valid email; `password` — min 6 chars                                                       |
-| **Signup**        | `name` — min 2 chars; `email` — valid email; `password` — min 6 chars                                 |
-| **Submit Project**| `name` — min 3 chars; `repoUrl` — valid URL; `liveUrl` — valid URL; `description` — min 20 chars     |
-| **Review action** | `status` — enum `APPROVED \| REJECTED`; `reviewComment` — optional string, max 500 chars              |
-
 ---
 
 ## Environment Variables

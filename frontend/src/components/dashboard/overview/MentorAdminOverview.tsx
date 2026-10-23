@@ -1,8 +1,12 @@
 "use client";
 
+import { formatDate } from "@/lib/formatDate";
 import Link from "next/link";
 import type { User } from "@/types/auth";
-import { useMentorStats, useMentorProjects } from "@/hooks/queries/use-mentor-queries";
+import {
+  useMentorStats,
+  useMentorProjects,
+} from "@/hooks/queries/use-mentor-queries";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/shared/StatusBadge";
@@ -35,10 +39,6 @@ export function MentorAdminOverview({ user }: MentorAdminOverviewProps) {
   const isLoading = statsLoading || projectsLoading;
 
   const reviewedCount = statsData.approved + statsData.rejected;
-  const reviewProgressPercent =
-    statsData.total > 0 ? Math.round((reviewedCount / statsData.total) * 100) : 0;
-  const approvalRatePercent =
-    reviewedCount > 0 ? Math.round((statsData.approved / reviewedCount) * 100) : 0;
 
   return (
     <div className="space-y-6">
@@ -113,7 +113,10 @@ export function MentorAdminOverview({ user }: MentorAdminOverviewProps) {
                 {isLoading ? "—" : statsData.pending}
               </span>
               <span className="text-[11px] text-amber-400/60 font-medium">
-                {statsData.total > 0 ? Math.round((statsData.pending / statsData.total) * 100) : 0}%
+                {statsData.total > 0
+                  ? Math.round((statsData.pending / statsData.total) * 100)
+                  : 0}
+                %
               </span>
             </div>
           </CardContent>
@@ -133,7 +136,10 @@ export function MentorAdminOverview({ user }: MentorAdminOverviewProps) {
                 {isLoading ? "—" : statsData.approved}
               </span>
               <span className="text-[11px] text-emerald-400/60 font-medium">
-                {statsData.total > 0 ? Math.round((statsData.approved / statsData.total) * 100) : 0}%
+                {statsData.total > 0
+                  ? Math.round((statsData.approved / statsData.total) * 100)
+                  : 0}
+                %
               </span>
             </div>
           </CardContent>
@@ -153,47 +159,93 @@ export function MentorAdminOverview({ user }: MentorAdminOverviewProps) {
                 {isLoading ? "—" : statsData.rejected}
               </span>
               <span className="text-[11px] text-rose-400/60 font-medium">
-                {statsData.total > 0 ? Math.round((statsData.rejected / statsData.total) * 100) : 0}%
+                {statsData.total > 0
+                  ? Math.round((statsData.rejected / statsData.total) * 100)
+                  : 0}
+                %
               </span>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* ── Review Progress Bar ── */}
+      {/* ── Review Progress ── */}
       {statsData.total > 0 && (
         <Card className="border-white/[0.08] bg-[#111118]/80">
           <CardContent className="p-5 space-y-4">
+            {/* Title row */}
             <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-xs font-semibold text-white/90">Review Progress</h3>
-                <p className="text-[11px] text-white/40">
-                  {reviewedCount} of {statsData.total} projects reviewed ({reviewProgressPercent}%)
-                </p>
-              </div>
-              <div className="text-right">
-                <span className="text-xs font-semibold text-emerald-400">{approvalRatePercent}%</span>
-                <span className="text-[11px] text-white/40 block">Approval rate</span>
-              </div>
+              <h3 className="text-xs font-semibold text-white/90">
+                Review Progress
+              </h3>
+              <span className="text-[11px] text-white/40">
+                {reviewedCount} / {statsData.total} reviewed
+              </span>
             </div>
 
-            <div className="w-full h-2 rounded-full bg-white/[0.06] overflow-hidden flex">
-              <div
-                className="h-full bg-emerald-500 transition-all duration-500"
-                style={{ width: `${statsData.total > 0 ? (statsData.approved / statsData.total) * 100 : 0}%` }}
-                title={`Approved: ${statsData.approved}`}
-              />
-              <div
-                className="h-full bg-rose-500 transition-all duration-500"
-                style={{ width: `${statsData.total > 0 ? (statsData.rejected / statsData.total) * 100 : 0}%` }}
-                title={`Rejected: ${statsData.rejected}`}
-              />
+            {/* Segmented bar */}
+            <div className="w-full h-3 rounded-full bg-white/[0.06] overflow-hidden flex gap-px">
+              {statsData.approved > 0 && (
+                <div
+                  className="h-full bg-emerald-500 rounded-l-full transition-all duration-700"
+                  style={{
+                    width: `${(statsData.approved / statsData.total) * 100}%`,
+                  }}
+                />
+              )}
+              {statsData.pending > 0 && (
+                <div
+                  className="h-full bg-amber-400 transition-all duration-700"
+                  style={{
+                    width: `${(statsData.pending / statsData.total) * 100}%`,
+                  }}
+                />
+              )}
+              {statsData.rejected > 0 && (
+                <div
+                  className="h-full bg-rose-500 rounded-r-full transition-all duration-700"
+                  style={{
+                    width: `${(statsData.rejected / statsData.total) * 100}%`,
+                  }}
+                />
+              )}
+            </div>
+
+            {/* Legend */}
+            <div className="flex items-center gap-5">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                <span className="text-[11px] text-white/50">
+                  Approved{" "}
+                  <span className="text-white/80 font-medium">
+                    {statsData.approved}
+                  </span>
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
+                <span className="text-[11px] text-white/50">
+                  Pending{" "}
+                  <span className="text-white/80 font-medium">
+                    {statsData.pending}
+                  </span>
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
+                <span className="text-[11px] text-white/50">
+                  Rejected{" "}
+                  <span className="text-white/80 font-medium">
+                    {statsData.rejected}
+                  </span>
+                </span>
+              </div>
             </div>
           </CardContent>
         </Card>
       )}
 
-      {/* ── Recent Submissions ── */}
+      {/* ── Recent Projects ── */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-white">Recent Projects</h2>
@@ -219,64 +271,68 @@ export function MentorAdminOverview({ user }: MentorAdminOverviewProps) {
             No projects submitted yet
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {recentProjects.map((project) => (
-              <Card
+          <div className="rounded-xl border border-white/[0.06] bg-[#111118]/80 overflow-hidden">
+            {recentProjects.map((project, index) => (
+              <div
                 key={project.id}
-                className="border-white/[0.06] bg-[#111118]/80 hover:bg-[#111118] transition-colors"
+                className={`flex items-center gap-4 px-4 py-3.5 hover:bg-white/[0.03] transition-colors ${
+                  index !== recentProjects.length - 1
+                    ? "border-b border-white/[0.04]"
+                    : ""
+                }`}
               >
-                <CardContent className="p-4 flex flex-col justify-between gap-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <h3 className="font-medium text-white text-xs truncate">
-                        {project.name}
-                      </h3>
-                      <p className="text-[11px] text-white/40 truncate mt-0.5">
-                        {project.student.name} • {project.student.email}
-                      </p>
-                    </div>
+                {/* Icon */}
+                <div className="w-8 h-8 rounded-lg bg-violet-600/10 border border-violet-500/20 flex items-center justify-center shrink-0">
+                  <FolderGit2 className="w-3.5 h-3.5 text-violet-400" />
+                </div>
 
-                    <StatusBadge
-                      status={project.status}
-                      className="text-[9px]"
-                    />
-                  </div>
+                {/* Info */}
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-white truncate">
+                    {project.name}
+                  </p>
+                  <p className="text-[11px] text-white/40 truncate mt-0.5">
+                    {project.student.name}
+                  </p>
+                </div>
 
-                  <div className="flex items-center justify-between text-xs pt-1 border-t border-white/[0.04]">
-                    <div className="flex items-center gap-2">
-                      {project.repoUrl && (
-                        <a
-                          href={project.repoUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-white/40 hover:text-white transition-colors"
-                          title="Repository"
-                        >
-                          <GitBranch className="w-3.5 h-3.5" />
-                        </a>
-                      )}
-                      {project.liveUrl && (
-                        <a
-                          href={project.liveUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-violet-400 hover:text-violet-300 transition-colors"
-                          title="Live Demo"
-                        >
-                          <ExternalLink className="w-3.5 h-3.5" />
-                        </a>
-                      )}
-                    </div>
-
-                    <Link
-                      href="/dashboard/projects"
-                      className="text-[11px] text-violet-400 hover:text-violet-300 transition-colors"
+                {/* Links */}
+                <div className="flex items-center gap-2 shrink-0">
+                  {project.repoUrl && (
+                    <a
+                      href={project.repoUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      title="Repository"
+                      className="w-6 h-6 flex items-center justify-center rounded-md text-white/30 hover:text-white/70 hover:bg-white/[0.06] transition-all"
                     >
-                      Review →
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
+                      <GitBranch className="w-3.5 h-3.5" />
+                    </a>
+                  )}
+                  {project.liveUrl && (
+                    <a
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      title="Live Demo"
+                      className="w-6 h-6 flex items-center justify-center rounded-md text-white/30 hover:text-violet-400 hover:bg-violet-500/10 transition-all"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  )}
+                </div>
+
+                {/* Status */}
+                <StatusBadge
+                  status={project.status}
+                  className="text-[10px] shrink-0"
+                />
+
+                {/* Date */}
+                <span className="text-[11px] text-white/30 shrink-0 hidden sm:block">
+                  {formatDate(project.createdAt)}
+                </span>
+              </div>
             ))}
           </div>
         )}

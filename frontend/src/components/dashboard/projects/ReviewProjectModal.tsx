@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { reviewProject } from "@/services/mentor.service";
+import { useReviewProject } from "@/hooks/queries/use-mentor-queries";
 import type { MentorProjectItem } from "@/types/mentor";
 import {
   Dialog,
@@ -43,16 +43,15 @@ interface ReviewProjectModalProps {
   project: MentorProjectItem | null;
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
 }
 
 export function ReviewProjectModal({
   project,
   isOpen,
   onClose,
-  onSuccess,
 }: ReviewProjectModalProps) {
   const [serverError, setServerError] = useState<string | null>(null);
+  const review = useReviewProject();
 
   const {
     register,
@@ -60,7 +59,7 @@ export function ReviewProjectModal({
     setValue,
     watch,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<ReviewFormData>({
     resolver: zodResolver(reviewSchema),
     defaultValues: {
@@ -71,6 +70,8 @@ export function ReviewProjectModal({
     },
   });
 
+  const isSubmitting = review.isPending;
+
   const selectedStatus = watch("status");
 
   const onSubmit = async (data: ReviewFormData) => {
@@ -78,12 +79,14 @@ export function ReviewProjectModal({
     setServerError(null);
 
     try {
-      await reviewProject(project.id, {
-        status: data.status,
-        reviewComment: data.reviewComment?.trim() || undefined,
+      await review.mutateAsync({
+        id: project.id,
+        payload: {
+          status: data.status,
+          reviewComment: data.reviewComment?.trim() || undefined,
+        },
       });
       reset();
-      onSuccess();
       onClose();
     } catch (err) {
       setServerError(

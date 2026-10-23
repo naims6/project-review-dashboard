@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { submitProject } from "@/services/project.service";
+import { useSubmitProject } from "@/hooks/queries/use-student-queries";
 import {
   Dialog,
   DialogContent,
@@ -42,7 +42,6 @@ type SubmitFormData = z.infer<typeof submitSchema>;
 interface SubmitProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
 }
 
 // ── Component ────────────────────────────────────────────────────────────────
@@ -73,23 +72,24 @@ const Field = ({
 export function SubmitProjectModal({
   isOpen,
   onClose,
-  onSuccess,
 }: SubmitProjectModalProps) {
   const [serverError, setServerError] = useState<string | null>(null);
+  const submit = useSubmitProject();
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<SubmitFormData>({ resolver: zodResolver(submitSchema) });
+
+  const isSubmitting = submit.isPending;
 
   const onSubmit = async (data: SubmitFormData) => {
     setServerError(null);
     try {
-      await submitProject(data);
+      await submit.mutateAsync(data);
       reset();
-      onSuccess();
       onClose();
     } catch (err) {
       setServerError(

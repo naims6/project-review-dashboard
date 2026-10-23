@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import type { User as AuthUser } from "@/types/auth";
-import type { StudentProjectItem } from "@/types/project";
-import { getMyProjects } from "@/services/project.service";
+import { useMyProjects } from "@/hooks/queries/use-student-queries";
 import { SubmitProjectModal } from "./SubmitProjectModal";
 import { StudentProjectsTable } from "./StudentProjectsTable";
 import { Button } from "@/components/ui/button";
@@ -20,31 +19,14 @@ interface StudentDashboardViewProps {
 }
 
 export function StudentDashboardView({ user }: StudentDashboardViewProps) {
-  const [projects, setProjects] = useState<StudentProjectItem[]>([]);
-  const [total, setTotal] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Fetch student's own projects
-  const fetchProjects = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const res = await getMyProjects({ page, limit: 10 });
-      setProjects(res.data || []);
-      setTotal(res.meta?.total || 0);
-      setTotalPages(res.meta?.totalPages || 1);
-    } catch (err) {
-      console.error("Failed to load your projects:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page]);
+  const { data, isLoading } = useMyProjects({ page, limit: 10 });
 
-  useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
+  const projects = data?.data ?? [];
+  const total = data?.meta?.total ?? 0;
+  const totalPages = data?.meta?.totalPages ?? 1;
 
   // Derived counts for stat cards
   const pending = projects.filter((p) => p.status === "PENDING").length;
@@ -138,7 +120,6 @@ export function StudentDashboardView({ user }: StudentDashboardViewProps) {
       <SubmitProjectModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSuccess={fetchProjects}
       />
     </div>
   );

@@ -1,66 +1,36 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { getMentorProjects, getMentorStats } from "@/services/mentor.service";
-import type {
-  MentorProjectItem,
-  MentorStats,
-  ProjectStatus,
-} from "@/types/mentor";
+import { useState } from "react";
+import { useMentorProjects, useMentorStats } from "@/hooks/queries/use-mentor-queries";
+import type { MentorProjectItem, ProjectStatus } from "@/types/mentor";
 import { ReviewProjectModal } from "./ReviewProjectModal";
 import { ProjectsTable } from "./ProjectsTable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, ArrowUpDown } from "lucide-react";
 
-interface MentorDashboardViewProps {
-  initialStats?: MentorStats;
-}
-
-export function MentorDashboardView({ initialStats }: MentorDashboardViewProps) {
-  const [stats, setStats] = useState<MentorStats>(
-    initialStats || { total: 0, pending: 0, approved: 0, rejected: 0 },
-  );
-  const [projects, setProjects] = useState<MentorProjectItem[]>([]);
-  const [total, setTotal] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
+export function MentorDashboardView() {
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<ProjectStatus | "ALL">("ALL");
   const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const [isLoading, setIsLoading] = useState(true);
 
   const [selectedProject, setSelectedProject] = useState<MentorProjectItem | null>(null);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
 
-  const fetchData = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const [statsRes, projectsRes] = await Promise.all([
-        getMentorStats(),
-        getMentorProjects({
-          page,
-          limit: 10,
-          status: statusFilter,
-          search: search.trim() || undefined,
-          sortOrder,
-        }),
-      ]);
+  const { data: stats } = useMentorStats();
+  const { data, isLoading } = useMentorProjects({
+    page,
+    limit: 10,
+    status: statusFilter,
+    search: search.trim() || undefined,
+    sortOrder,
+  });
 
-      setStats(statsRes);
-      setProjects(projectsRes.data || []);
-      setTotal(projectsRes.meta?.total || 0);
-      setTotalPages(projectsRes.meta?.totalPages || 1);
-    } catch (err) {
-      console.error("Failed to fetch projects:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page, statusFilter, search, sortOrder]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  const statsData = stats ?? { total: 0, pending: 0, approved: 0, rejected: 0 };
+  const projects = data?.data ?? [];
+  const total = data?.meta?.total ?? 0;
+  const totalPages = data?.meta?.totalPages ?? 1;
 
   const handleOpenReview = (project: MentorProjectItem) => {
     setSelectedProject(project);
@@ -108,12 +78,12 @@ export function MentorDashboardView({ initialStats }: MentorDashboardViewProps) 
               {status === "ALL" ? "All" : status}
               <span className="ml-1.5 opacity-60 text-[10px]">
                 {status === "ALL"
-                  ? stats.total
+                  ? statsData.total
                   : status === "PENDING"
-                  ? stats.pending
+                  ? statsData.pending
                   : status === "APPROVED"
-                  ? stats.approved
-                  : stats.rejected}
+                  ? statsData.approved
+                  : statsData.rejected}
               </span>
             </button>
           ))}
@@ -163,7 +133,6 @@ export function MentorDashboardView({ initialStats }: MentorDashboardViewProps) 
         project={selectedProject}
         isOpen={isReviewOpen}
         onClose={() => setIsReviewOpen(false)}
-        onSuccess={fetchData}
       />
     </div>
   );

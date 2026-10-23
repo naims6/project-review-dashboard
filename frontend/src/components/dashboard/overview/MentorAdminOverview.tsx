@@ -1,11 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { User } from "@/types/auth";
-import type { MentorProjectItem, MentorStats } from "@/types/mentor";
-import { getMentorStats, getMentorProjects } from "@/services/mentor.service";
-import { getAdminUsers } from "@/services/admin.service";
+import { useMentorStats, useMentorProjects } from "@/hooks/queries/use-mentor-queries";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -26,63 +23,22 @@ interface MentorAdminOverviewProps {
 }
 
 export function MentorAdminOverview({ user }: MentorAdminOverviewProps) {
-  const [stats, setStats] = useState<MentorStats>({
-    total: 0,
-    pending: 0,
-    approved: 0,
-    rejected: 0,
+  const { data: stats, isLoading: statsLoading } = useMentorStats();
+  const { data: projectsData, isLoading: projectsLoading } = useMentorProjects({
+    page: 1,
+    limit: 4,
+    sortOrder: "desc",
   });
-  const [recentProjects, setRecentProjects] = useState<MentorProjectItem[]>([]);
-  const [, setTotalUsers] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    let isMounted = true;
+  const statsData = stats ?? { total: 0, pending: 0, approved: 0, rejected: 0 };
+  const recentProjects = projectsData?.data ?? [];
+  const isLoading = statsLoading || projectsLoading;
 
-    async function loadOverview() {
-      setIsLoading(true);
-      try {
-        const promises: Promise<unknown>[] = [
-          getMentorStats(),
-          getMentorProjects({ page: 1, limit: 4, sortOrder: "desc" }),
-        ];
-
-        if (user.role === "ADMIN") {
-          promises.push(getAdminUsers({ page: 1, limit: 1 }));
-        }
-
-        const results = await Promise.all(promises);
-
-        if (isMounted) {
-          const statsRes = results[0] as MentorStats;
-          const projectsRes = results[1] as { data: MentorProjectItem[] };
-
-          setStats(statsRes);
-          setRecentProjects(projectsRes.data || []);
-
-          if (user.role === "ADMIN" && results[2]) {
-            const adminRes = results[2] as { meta?: { total?: number } };
-            setTotalUsers(adminRes.meta?.total || 0);
-          }
-        }
-      } catch (err) {
-        console.error("Failed to load overview data:", err);
-      } finally {
-        if (isMounted) setIsLoading(false);
-      }
-    }
-
-    loadOverview();
-    return () => {
-      isMounted = false;
-    };
-  }, [user.role]);
-
-  const reviewedCount = stats.approved + stats.rejected;
+  const reviewedCount = statsData.approved + statsData.rejected;
   const reviewProgressPercent =
-    stats.total > 0 ? Math.round((reviewedCount / stats.total) * 100) : 0;
+    statsData.total > 0 ? Math.round((reviewedCount / statsData.total) * 100) : 0;
   const approvalRatePercent =
-    reviewedCount > 0 ? Math.round((stats.approved / reviewedCount) * 100) : 0;
+    reviewedCount > 0 ? Math.round((statsData.approved / reviewedCount) * 100) : 0;
 
   return (
     <div className="space-y-6">
@@ -137,7 +93,7 @@ export function MentorAdminOverview({ user }: MentorAdminOverviewProps) {
             </div>
             <div className="flex items-baseline justify-between">
               <span className="text-3xl font-bold text-white tracking-tight">
-                {isLoading ? "—" : stats.total}
+                {isLoading ? "—" : statsData.total}
               </span>
             </div>
           </CardContent>
@@ -154,10 +110,10 @@ export function MentorAdminOverview({ user }: MentorAdminOverviewProps) {
             </div>
             <div className="flex items-baseline justify-between">
               <span className="text-3xl font-bold text-amber-400 tracking-tight">
-                {isLoading ? "—" : stats.pending}
+                {isLoading ? "—" : statsData.pending}
               </span>
               <span className="text-[11px] text-amber-400/60 font-medium">
-                {stats.total > 0 ? Math.round((stats.pending / stats.total) * 100) : 0}%
+                {statsData.total > 0 ? Math.round((statsData.pending / statsData.total) * 100) : 0}%
               </span>
             </div>
           </CardContent>
@@ -174,10 +130,10 @@ export function MentorAdminOverview({ user }: MentorAdminOverviewProps) {
             </div>
             <div className="flex items-baseline justify-between">
               <span className="text-3xl font-bold text-emerald-400 tracking-tight">
-                {isLoading ? "—" : stats.approved}
+                {isLoading ? "—" : statsData.approved}
               </span>
               <span className="text-[11px] text-emerald-400/60 font-medium">
-                {stats.total > 0 ? Math.round((stats.approved / stats.total) * 100) : 0}%
+                {statsData.total > 0 ? Math.round((statsData.approved / statsData.total) * 100) : 0}%
               </span>
             </div>
           </CardContent>
@@ -194,10 +150,10 @@ export function MentorAdminOverview({ user }: MentorAdminOverviewProps) {
             </div>
             <div className="flex items-baseline justify-between">
               <span className="text-3xl font-bold text-rose-400 tracking-tight">
-                {isLoading ? "—" : stats.rejected}
+                {isLoading ? "—" : statsData.rejected}
               </span>
               <span className="text-[11px] text-rose-400/60 font-medium">
-                {stats.total > 0 ? Math.round((stats.rejected / stats.total) * 100) : 0}%
+                {statsData.total > 0 ? Math.round((statsData.rejected / statsData.total) * 100) : 0}%
               </span>
             </div>
           </CardContent>
@@ -205,14 +161,14 @@ export function MentorAdminOverview({ user }: MentorAdminOverviewProps) {
       </div>
 
       {/* ── Review Progress Bar ── */}
-      {stats.total > 0 && (
+      {statsData.total > 0 && (
         <Card className="border-white/[0.08] bg-[#111118]/80">
           <CardContent className="p-5 space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-xs font-semibold text-white/90">Review Progress</h3>
                 <p className="text-[11px] text-white/40">
-                  {reviewedCount} of {stats.total} projects reviewed ({reviewProgressPercent}%)
+                  {reviewedCount} of {statsData.total} projects reviewed ({reviewProgressPercent}%)
                 </p>
               </div>
               <div className="text-right">
@@ -224,13 +180,13 @@ export function MentorAdminOverview({ user }: MentorAdminOverviewProps) {
             <div className="w-full h-2 rounded-full bg-white/[0.06] overflow-hidden flex">
               <div
                 className="h-full bg-emerald-500 transition-all duration-500"
-                style={{ width: `${stats.total > 0 ? (stats.approved / stats.total) * 100 : 0}%` }}
-                title={`Approved: ${stats.approved}`}
+                style={{ width: `${statsData.total > 0 ? (statsData.approved / statsData.total) * 100 : 0}%` }}
+                title={`Approved: ${statsData.approved}`}
               />
               <div
                 className="h-full bg-rose-500 transition-all duration-500"
-                style={{ width: `${stats.total > 0 ? (stats.rejected / stats.total) * 100 : 0}%` }}
-                title={`Rejected: ${stats.rejected}`}
+                style={{ width: `${statsData.total > 0 ? (statsData.rejected / statsData.total) * 100 : 0}%` }}
+                title={`Rejected: ${statsData.rejected}`}
               />
             </div>
           </CardContent>

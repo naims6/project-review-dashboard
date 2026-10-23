@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { getAdminUsers } from "@/services/admin.service";
+import { useState } from "react";
+import { useAdminUsers } from "@/hooks/queries/use-admin-queries";
 import type { AdminUserItem } from "@/types/admin";
 import type { Role } from "@/types/auth";
 import { CreateUserModal } from "./CreateUserModal";
@@ -11,43 +11,25 @@ import { Input } from "@/components/ui/input";
 import { UserPlus, Search, ArrowUpDown } from "lucide-react";
 
 export function AdminDashboardView() {
-  const [users, setUsers] = useState<AdminUserItem[]>([]);
-  const [totalUsers, setTotalUsers] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);
   const [roleFilter, setRoleFilter] = useState<Role | "ALL">("ALL");
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<"createdAt" | "name" | "email" | "role">("createdAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const [isLoading, setIsLoading] = useState(true);
-
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
-  const fetchUsers = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const res = await getAdminUsers({
-        page,
-        limit: 10,
-        role: roleFilter,
-        search: search.trim() || undefined,
-        sortBy,
-        sortOrder,
-      });
+  const { data, isLoading } = useAdminUsers({
+    page,
+    limit: 10,
+    role: roleFilter,
+    search: search.trim() || undefined,
+    sortBy,
+    sortOrder,
+  });
 
-      setUsers(res.data || []);
-      setTotalUsers(res.meta?.total || 0);
-      setTotalPages(res.meta?.totalPages || 1);
-    } catch (err) {
-      console.error("Failed to fetch users:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page, roleFilter, search, sortBy, sortOrder]);
-
-  useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+  const users: AdminUserItem[] = data?.data ?? [];
+  const totalUsers = data?.meta?.total ?? 0;
+  const totalPages = data?.meta?.totalPages ?? 1;
 
   const handleRoleFilterChange = (role: Role | "ALL") => {
     setRoleFilter(role);
@@ -155,7 +137,6 @@ export function AdminDashboardView() {
       <CreateUserModal
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
-        onSuccess={fetchUsers}
       />
     </div>
   );

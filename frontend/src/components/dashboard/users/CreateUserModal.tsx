@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { createAdminUser } from "@/services/admin.service";
+import { useCreateUser } from "@/hooks/queries/use-admin-queries";
 import {
   Dialog,
   DialogContent,
@@ -39,16 +39,15 @@ type CreateUserFormData = z.infer<typeof createUserSchema>;
 interface CreateUserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
 }
 
 export function CreateUserModal({
   isOpen,
   onClose,
-  onSuccess,
 }: CreateUserModalProps) {
   const [serverError, setServerError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const createUser = useCreateUser();
 
   const {
     register,
@@ -56,7 +55,7 @@ export function CreateUserModal({
     setValue,
     watch,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<CreateUserFormData>({
     resolver: zodResolver(createUserSchema),
     defaultValues: {
@@ -67,20 +66,20 @@ export function CreateUserModal({
     },
   });
 
+  const isSubmitting = createUser.isPending;
   const selectedRole = watch("role");
 
   const onSubmit = async (data: CreateUserFormData) => {
     setServerError(null);
 
     try {
-      await createAdminUser({
+      await createUser.mutateAsync({
         name: data.name.trim(),
         email: data.email.trim(),
         password: data.password,
         role: data.role,
       });
       reset();
-      onSuccess();
       onClose();
     } catch (err) {
       setServerError(

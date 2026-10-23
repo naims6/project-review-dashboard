@@ -4,18 +4,9 @@ import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { login } from "@/services/auth.service";
-
-// ── Schema ────────────────────────────────────────────────────────────────────
-
-const schema = z.object({
-  email: z.string().email("Enter a valid email address"),
-  password: z.string().min(1, "Password is required"),
-});
-
-type LoginForm = z.infer<typeof schema>;
+import { loginSchema, type LoginForm } from "@/schemas/auth.schema";
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -28,7 +19,7 @@ export default function LoginPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<LoginForm>({ resolver: zodResolver(schema) });
+  } = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
 
   const onSubmit = async (data: LoginForm) => {
     setServerError(null);

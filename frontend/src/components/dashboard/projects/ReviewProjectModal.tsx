@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useReviewProject } from "@/hooks/queries/use-mentor-queries";
 import type { MentorProjectItem } from "@/types/mentor";
+import { reviewProjectSchema, type ReviewProjectForm } from "@/schemas/project.schema";
 import {
   Dialog,
   DialogContent,
@@ -26,18 +26,6 @@ import {
   Mail,
   AlertCircle,
 } from "lucide-react";
-
-const reviewSchema = z.object({
-  status: z.enum(["APPROVED", "REJECTED"], {
-    error: "Please select either APPROVED or REJECTED",
-  }),
-  reviewComment: z
-    .string()
-    .max(500, "Review comment cannot exceed 500 characters")
-    .optional(),
-});
-
-type ReviewFormData = z.infer<typeof reviewSchema>;
 
 interface ReviewProjectModalProps {
   project: MentorProjectItem | null;
@@ -60,8 +48,8 @@ export function ReviewProjectModal({
     watch,
     reset,
     formState: { errors },
-  } = useForm<ReviewFormData>({
-    resolver: zodResolver(reviewSchema),
+  } = useForm<ReviewProjectForm>({
+    resolver: zodResolver(reviewProjectSchema),
     defaultValues: {
       status: (project?.status === "APPROVED" || project?.status === "REJECTED")
         ? project.status
@@ -74,7 +62,7 @@ export function ReviewProjectModal({
 
   const selectedStatus = watch("status");
 
-  const onSubmit = async (data: ReviewFormData) => {
+  const onSubmit = async (data: ReviewProjectForm) => {
     if (!project) return;
     setServerError(null);
 

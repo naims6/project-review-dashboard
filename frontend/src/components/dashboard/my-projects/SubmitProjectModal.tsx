@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useSubmitProject } from "@/hooks/queries/use-student-queries";
+import { submitProjectSchema, type SubmitProjectForm } from "@/schemas/project.schema";
 import {
   Dialog,
   DialogContent,
@@ -15,27 +15,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Loader2, FolderGit2 } from "lucide-react";
-
-// ── Validation schema ────────────────────────────────────────────────────────
-
-const submitSchema = z.object({
-  name: z.string().trim().min(2, "Project name must be at least 2 characters"),
-  repoUrl: z
-    .string()
-    .trim()
-    .url("Must be a valid URL")
-    .refine(
-      (url) => /^https?:\/\/(www\.)?github\.com\/.+/.test(url),
-      "Must be a valid GitHub repository URL",
-    ),
-  liveUrl: z.string().trim().url("Must be a valid URL"),
-  description: z
-    .string()
-    .trim()
-    .min(5, "Description must be at least 5 characters"),
-});
-
-type SubmitFormData = z.infer<typeof submitSchema>;
 
 // ── Props ────────────────────────────────────────────────────────────────────
 
@@ -81,11 +60,11 @@ export function SubmitProjectModal({
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<SubmitFormData>({ resolver: zodResolver(submitSchema) });
+  } = useForm<SubmitProjectForm>({ resolver: zodResolver(submitProjectSchema) });
 
   const isSubmitting = submit.isPending;
 
-  const onSubmit = async (data: SubmitFormData) => {
+  const onSubmit = async (data: SubmitProjectForm) => {
     setServerError(null);
     try {
       await submit.mutateAsync(data);

@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useCreateUser } from "@/hooks/queries/use-admin-queries";
+import { createUserSchema, type CreateUserForm } from "@/schemas/user.schema";
 import {
   Dialog,
   DialogContent,
@@ -24,17 +24,6 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
-
-const createUserSchema = z.object({
-  name: z.string().trim().min(2, "Name must be at least 2 characters long"),
-  email: z.string().trim().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters long"),
-  role: z.enum(["STUDENT", "MENTOR"], {
-    error: "Role must be either STUDENT or MENTOR",
-  }),
-});
-
-type CreateUserFormData = z.infer<typeof createUserSchema>;
 
 interface CreateUserModalProps {
   isOpen: boolean;
@@ -56,7 +45,7 @@ export function CreateUserModal({
     watch,
     reset,
     formState: { errors },
-  } = useForm<CreateUserFormData>({
+  } = useForm<CreateUserForm>({
     resolver: zodResolver(createUserSchema),
     defaultValues: {
       name: "",
@@ -69,7 +58,7 @@ export function CreateUserModal({
   const isSubmitting = createUser.isPending;
   const selectedRole = watch("role");
 
-  const onSubmit = async (data: CreateUserFormData) => {
+  const onSubmit = async (data: CreateUserForm) => {
     setServerError(null);
 
     try {

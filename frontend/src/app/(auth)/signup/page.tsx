@@ -4,28 +4,9 @@ import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { signup } from "@/services/auth.service";
-
-// ── Schema ────────────────────────────────────────────────────────────────────
-
-const schema = z
-  .object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    email: z.string().email("Enter a valid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string(),
-    terms: z
-      .boolean()
-      .refine((v) => v === true, "You must accept the terms to continue"),
-  })
-  .refine((d) => d.password === d.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
-
-type SignupForm = z.infer<typeof schema>;
+import { signupSchema, type SignupForm } from "@/schemas/auth.schema";
 
 // ── Password strength ─────────────────────────────────────────────────────────
 
@@ -58,7 +39,7 @@ export default function SignupPage() {
     watch,
     formState: { errors, isSubmitting },
   } = useForm<SignupForm>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(signupSchema),
     defaultValues: { terms: false },
   });
 

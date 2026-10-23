@@ -10,6 +10,7 @@ import { login } from "@/services/auth.service";
 import { loginSchema, type LoginForm } from "@/schemas/auth.schema";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/shared/FormField";
+import { Eye, EyeOff } from "lucide-react";
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -93,9 +94,10 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword((v) => !v)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-medium text-white/25 hover:text-white/50 transition-colors"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
-                {showPassword ? "HIDE" : "SHOW"}
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
             {errors.password && (

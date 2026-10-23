@@ -15,10 +15,12 @@ import {
   GitBranch,
   Loader2,
   MessageSquare,
+  Plus,
 } from "lucide-react";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { Pagination } from "@/components/shared/Pagination";
 import { formatDate } from "@/lib/formatDate";
+import { Button } from "@/components/ui/button";
 
 interface StudentProjectsTableProps {
   projects: StudentProjectItem[];
@@ -40,23 +42,35 @@ export function StudentProjectsTable({
   onOpenSubmitModal,
 }: StudentProjectsTableProps) {
   return (
-    <div className="rounded-xl border border-white/[0.08] bg-[#111118]/80 overflow-hidden">
+    <div className="rounded-xl border border-white/[0.07] bg-[#0d0d14] overflow-hidden">
+      {/* Table header bar */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06]">
+        <div>
+          <p className="text-xs font-semibold text-white/80">Submissions</p>
+          {!isLoading && (
+            <p className="text-[10px] text-white/35 mt-0.5">
+              {total} project{total !== 1 ? "s" : ""} submitted
+            </p>
+          )}
+        </div>
+      </div>
+
       <Table>
-        <TableHeader className="bg-white/[0.02] border-b border-white/[0.06]">
-          <TableRow className="border-b border-white/[0.06] hover:bg-transparent">
-            <TableHead className="text-white/40 font-medium text-xs py-3 px-4">
+        <TableHeader>
+          <TableRow className="border-b border-white/[0.05] hover:bg-transparent">
+            <TableHead className="text-white/35 font-semibold text-[10px] uppercase tracking-wider py-2.5 px-4 w-[30%]">
               Project
             </TableHead>
-            <TableHead className="text-white/40 font-medium text-xs py-3 px-4">
+            <TableHead className="text-white/35 font-semibold text-[10px] uppercase tracking-wider py-2.5 px-4">
               Links
             </TableHead>
-            <TableHead className="text-white/40 font-medium text-xs py-3 px-4">
+            <TableHead className="text-white/35 font-semibold text-[10px] uppercase tracking-wider py-2.5 px-4">
               Status
             </TableHead>
-            <TableHead className="text-white/40 font-medium text-xs py-3 px-4">
+            <TableHead className="text-white/35 font-semibold text-[10px] uppercase tracking-wider py-2.5 px-4">
               Submitted
             </TableHead>
-            <TableHead className="text-white/40 font-medium text-xs py-3 px-4">
+            <TableHead className="text-white/35 font-semibold text-[10px] uppercase tracking-wider py-2.5 px-4">
               Mentor Feedback
             </TableHead>
           </TableRow>
@@ -65,33 +79,36 @@ export function StudentProjectsTable({
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell colSpan={5} className="h-36 text-center">
-                <div className="flex flex-col items-center justify-center gap-2 text-white/40">
+              <TableCell colSpan={5} className="h-40 text-center border-0">
+                <div className="flex flex-col items-center justify-center gap-2">
                   <Loader2 className="w-5 h-5 animate-spin text-violet-400" />
-                  <span className="text-xs">Loading your projects...</span>
+                  <span className="text-xs text-white/30">Loading projects…</span>
                 </div>
               </TableCell>
             </TableRow>
           ) : projects.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={5} className="h-40 text-center">
-                <div className="flex flex-col items-center justify-center gap-3 text-white/40">
-                  <FolderGit2 className="w-8 h-8 text-white/10" />
+              <TableCell colSpan={5} className="h-52 text-center border-0">
+                <div className="flex flex-col items-center justify-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center">
+                    <FolderGit2 className="w-5 h-5 text-white/20" />
+                  </div>
                   <div>
-                    <p className="text-sm font-medium text-white/50">
-                      No projects submitted yet
+                    <p className="text-sm font-semibold text-white/60">
+                      No projects yet
                     </p>
-                    <p className="text-xs mt-0.5">
-                      Click{" "}
-                      <button
-                        onClick={onOpenSubmitModal}
-                        className="text-violet-400 hover:text-violet-300 transition-colors underline underline-offset-2"
-                      >
-                        Submit Project
-                      </button>{" "}
-                      to get started.
+                    <p className="text-xs text-white/30 mt-1">
+                      Submit your first project to get started
                     </p>
                   </div>
+                  <Button
+                    size="sm"
+                    onClick={onOpenSubmitModal}
+                    className="bg-violet-600 hover:bg-violet-500 text-white text-xs h-8 gap-1.5"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    Submit Project
+                  </Button>
                 </div>
               </TableCell>
             </TableRow>
@@ -99,23 +116,30 @@ export function StudentProjectsTable({
             projects.map((proj) => (
               <TableRow
                 key={proj.id}
-                className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors"
+                className="border-b border-white/[0.04] hover:bg-violet-500/[0.03] transition-colors group"
               >
                 {/* Project name + description */}
-                <TableCell className="py-3 px-4">
-                  <p className="text-xs font-medium text-white/90">
-                    {proj.name}
-                  </p>
-                  <p
-                    className="text-[11px] text-white/40 mt-0.5 line-clamp-1 max-w-[180px]"
-                    title={proj.description}
-                  >
-                    {proj.description}
-                  </p>
+                <TableCell className="py-3.5 px-4">
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-6 h-6 rounded-md bg-white/[0.04] border border-white/[0.06] flex items-center justify-center shrink-0 mt-0.5 group-hover:border-violet-500/20 transition-colors">
+                      <FolderGit2 className="w-3 h-3 text-white/30 group-hover:text-violet-400 transition-colors" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-white/90 leading-tight">
+                        {proj.name}
+                      </p>
+                      <p
+                        className="text-[11px] text-white/35 mt-0.5 line-clamp-1 max-w-[160px]"
+                        title={proj.description}
+                      >
+                        {proj.description}
+                      </p>
+                    </div>
+                  </div>
                 </TableCell>
 
                 {/* Repo + Live links */}
-                <TableCell className="py-3 px-4">
+                <TableCell className="py-3.5 px-4">
                   <div className="flex items-center gap-2">
                     {proj.repoUrl && (
                       <a
@@ -123,9 +147,10 @@ export function StudentProjectsTable({
                         target="_blank"
                         rel="noreferrer"
                         title="Repository"
-                        className="text-white/40 hover:text-white transition-colors"
+                        className="flex items-center gap-1 text-[11px] text-white/35 hover:text-white/80 transition-colors"
                       >
                         <GitBranch className="w-3.5 h-3.5" />
+                        <span>Repo</span>
                       </a>
                     )}
                     {proj.liveUrl && (
@@ -134,31 +159,35 @@ export function StudentProjectsTable({
                         target="_blank"
                         rel="noreferrer"
                         title="Live Demo"
-                        className="text-violet-400 hover:text-violet-300 transition-colors"
+                        className="flex items-center gap-1 text-[11px] text-violet-400 hover:text-violet-300 transition-colors"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
+                        <span>Live</span>
                       </a>
+                    )}
+                    {!proj.repoUrl && !proj.liveUrl && (
+                      <span className="text-[11px] text-white/20">—</span>
                     )}
                   </div>
                 </TableCell>
 
-                {/* Status badge */}
-                <TableCell className="py-3 px-4">
+                {/* Status */}
+                <TableCell className="py-3.5 px-4">
                   <StatusBadge status={proj.status} />
                 </TableCell>
 
-                {/* Submitted date */}
-                <TableCell className="py-3 px-4 text-xs text-white/40">
+                {/* Date */}
+                <TableCell className="py-3.5 px-4 text-[11px] text-white/40 tabular-nums">
                   {formatDate(proj.createdAt)}
                 </TableCell>
 
-                {/* Mentor review comment */}
-                <TableCell className="py-3 px-4">
+                {/* Mentor feedback */}
+                <TableCell className="py-3.5 px-4">
                   {proj.reviewComment ? (
-                    <div className="flex items-start gap-1.5 max-w-[220px]">
-                      <MessageSquare className="w-3.5 h-3.5 text-violet-400 shrink-0 mt-0.5" />
+                    <div className="flex items-start gap-2 max-w-[220px] bg-white/[0.02] rounded-lg px-2.5 py-2 border border-white/[0.04]">
+                      <MessageSquare className="w-3 h-3 text-violet-400 shrink-0 mt-0.5" />
                       <span
-                        className="text-[11px] text-white/60 line-clamp-2"
+                        className="text-[11px] text-white/60 line-clamp-2 leading-relaxed"
                         title={proj.reviewComment}
                       >
                         {proj.reviewComment}
@@ -166,9 +195,7 @@ export function StudentProjectsTable({
                     </div>
                   ) : (
                     <span className="text-[11px] text-white/20 italic">
-                      {proj.status === "PENDING"
-                        ? "Awaiting review"
-                        : "No comment"}
+                      {proj.status === "PENDING" ? "Awaiting review…" : "No comment"}
                     </span>
                   )}
                 </TableCell>
@@ -179,15 +206,17 @@ export function StudentProjectsTable({
       </Table>
 
       {!isLoading && projects.length > 0 && (
-        <Pagination
-          page={page}
-          totalPages={totalPages}
-          total={total}
-          count={projects.length}
-          itemLabel="projects"
-          isLoading={isLoading}
-          onPageChange={onPageChange}
-        />
+        <div className="border-t border-white/[0.05]">
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            total={total}
+            count={projects.length}
+            itemLabel="projects"
+            isLoading={isLoading}
+            onPageChange={onPageChange}
+          />
+        </div>
       )}
     </div>
   );

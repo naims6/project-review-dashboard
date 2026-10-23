@@ -10,6 +10,7 @@ import { signup } from "@/services/auth.service";
 import { signupSchema, type SignupForm } from "@/schemas/auth.schema";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/shared/FormField";
+import { Eye, EyeOff } from "lucide-react";
 
 // ── Password strength ─────────────────────────────────────────────────────────
 
@@ -44,6 +45,7 @@ const STRENGTH_TEXT_CLASSES = [
 export default function SignupPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
   const {
@@ -147,9 +149,10 @@ export default function SignupPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword((v) => !v)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-medium text-white/25 hover:text-white/50 transition-colors"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
-                {showPassword ? "HIDE" : "SHOW"}
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
             {errors.password && (
@@ -198,14 +201,32 @@ export default function SignupPage() {
           </div>
 
           {/* Confirm password */}
-          <FormField label="Confirm password" error={errors.confirmPassword?.message} variant="auth">
-            <Input
-              type="password"
-              placeholder="••••••••"
-              {...register("confirmPassword")}
-              className="w-full px-4 py-2.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[14px] placeholder:text-white/20 focus:outline-none focus:border-violet-500/50 focus:bg-white/[0.06] transition-all"
-            />
-          </FormField>
+          <div>
+            <label className="block text-[12px] font-medium text-white/40 uppercase tracking-wider mb-2">
+              Confirm password
+            </label>
+            <div className="relative">
+              <Input
+                type={showConfirm ? "text" : "password"}
+                placeholder="••••••••"
+                {...register("confirmPassword")}
+                className="w-full px-4 py-2.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[14px] placeholder:text-white/20 focus:outline-none focus:border-violet-500/50 focus:bg-white/[0.06] transition-all pr-12"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirm((v) => !v)}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
+                aria-label={showConfirm ? "Hide password" : "Show password"}
+              >
+                {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            {errors.confirmPassword && (
+              <p className="mt-1.5 text-[12px] text-red-400">
+                {errors.confirmPassword.message}
+              </p>
+            )}
+          </div>
 
           {/* Terms */}
           <div>

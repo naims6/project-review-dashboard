@@ -48,9 +48,6 @@ export function MentorAdminOverview({ user }: MentorAdminOverviewProps) {
           <h1 className="text-xl font-bold tracking-tight text-white mb-0.5">
             Overview
           </h1>
-          <p className="text-xs text-white/50">
-            Welcome back, {user.name}. Here is what is happening today.
-          </p>
         </div>
 
         <div className="flex items-center gap-2">

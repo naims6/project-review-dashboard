@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import type { User } from "@/types/auth";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-import { ChevronRight, UserCircle2, LogOut, User as UserIcon } from "lucide-react";
+import { ChevronRight, LogOut, User as UserIcon } from "lucide-react";
 import { logout } from "@/services/auth.service";
 
 interface DashboardHeaderProps {
@@ -20,6 +20,15 @@ const SEGMENT_LABELS: Record<string, string> = {
   users: "Users",
   profile: "Profile",
 };
+
+function getInitials(name: string): string {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0].toUpperCase())
+    .join("");
+}
 
 export function DashboardHeader({ user }: DashboardHeaderProps) {
   const pathname = usePathname();
@@ -79,9 +88,9 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
         <button
           onClick={() => setOpen((prev) => !prev)}
           aria-label="User menu"
-          className="w-9 h-9 rounded-full bg-white/[0.05] border border-white/[0.08] flex items-center justify-center text-white/70 hover:text-white hover:bg-white/[0.10] hover:border-violet-500/40 transition-all"
+          className="w-8 h-8 rounded-full bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-300 hover:bg-violet-600/30 hover:border-violet-400/50 transition-all text-[11px] font-bold tracking-wide"
         >
-          <UserCircle2 className="w-5 h-5" />
+          {getInitials(user.name)}
         </button>
 
         {open && (

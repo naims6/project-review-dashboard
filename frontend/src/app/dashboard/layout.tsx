@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/layout/DashboardSidebar";
 import { DashboardHeader } from "@/components/dashboard/layout/DashboardHeader";
+import { UserProvider } from "@/providers/user-provider";
 
 function DashboardSkeleton() {
   return (
@@ -31,18 +32,20 @@ async function DashboardLayoutContent({
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex min-h-screen w-full bg-[#0a0a0f] text-white">
-        {/* ── Left Sidebar ── */}
-        <DashboardSidebar user={user} />
+      <UserProvider user={user}>
+        <div className="flex min-h-screen w-full bg-[#0a0a0f] text-white">
+          {/* ── Left Sidebar ── */}
+          <DashboardSidebar user={user} />
 
-        {/* ── Main Content Area ── */}
-        <SidebarInset className="bg-[#0a0a0f] flex flex-col flex-1 min-w-0">
-          <DashboardHeader user={user} />
-          <main className="flex-1 p-6 lg:p-8 max-w-7xl w-full mx-auto">
-            {children}
-          </main>
-        </SidebarInset>
-      </div>
+          {/* ── Main Content Area ── */}
+          <SidebarInset className="bg-[#0a0a0f] flex flex-col flex-1 min-w-0">
+            <DashboardHeader user={user} />
+            <main className="flex-1 p-6 lg:p-8 max-w-7xl w-full mx-auto">
+              {children}
+            </main>
+          </SidebarInset>
+        </div>
+      </UserProvider>
     </SidebarProvider>
   );
 }

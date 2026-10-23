@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { login } from "@/services/auth.service";
 import { loginSchema, type LoginForm } from "@/schemas/auth.schema";
+import { Input } from "@/components/ui/input";
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -34,10 +35,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div
-      className="min-h-screen bg-[#0a0a0f] flex items-center justify-center px-4"
-      style={{ fontFamily: "var(--font-inter)" }}
-    >
+    <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center px-4">
       <div className="w-full max-w-[380px]">
         {/* Brand */}
         <div className="mb-8">
@@ -70,7 +68,7 @@ export default function LoginPage() {
             <label className="block text-[12px] font-medium text-white/40 uppercase tracking-wider mb-2">
               Email
             </label>
-            <input
+            <Input
               type="email"
               placeholder="you@example.com"
               {...register("email")}
@@ -92,7 +90,7 @@ export default function LoginPage() {
               </a>
             </div>
             <div className="relative">
-              <input
+              <Input
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
                 {...register("password")}
@@ -113,7 +111,7 @@ export default function LoginPage() {
 
           {/* Remember me */}
           <label className="flex items-center gap-2.5 cursor-pointer select-none pt-1">
-            <input
+            <Input
               type="checkbox"
               className="w-4 h-4 rounded border border-white/15 bg-white/5 accent-violet-500"
             />

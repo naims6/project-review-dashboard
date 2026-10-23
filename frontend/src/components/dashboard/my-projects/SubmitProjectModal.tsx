@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { AlertCircle, Loader2, FolderGit2 } from "lucide-react";
 
 // ── Props ────────────────────────────────────────────────────────────────────
@@ -124,7 +125,7 @@ export function SubmitProjectModal({
             hint="min 2 chars"
             error={errors.name?.message}
           >
-            <input
+            <Input
               {...register("name")}
               placeholder="e.g. E-Commerce App"
               className={inputClass}
@@ -137,7 +138,7 @@ export function SubmitProjectModal({
             hint="must be github.com"
             error={errors.repoUrl?.message}
           >
-            <input
+            <Input
               {...register("repoUrl")}
               type="url"
               placeholder="https://github.com/username/repo"
@@ -147,7 +148,7 @@ export function SubmitProjectModal({
 
           {/* Live URL */}
           <Field label="Live Demo URL" error={errors.liveUrl?.message}>
-            <input
+            <Input
               {...register("liveUrl")}
               type="url"
               placeholder="https://my-project.vercel.app"

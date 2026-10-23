@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { signup } from "@/services/auth.service";
 import { signupSchema, type SignupForm } from "@/schemas/auth.schema";
+import { Input } from "@/components/ui/input";
 
 // ── Password strength ─────────────────────────────────────────────────────────
 
@@ -18,12 +19,22 @@ const PASSWORD_CHECKS = [
 ];
 
 const STRENGTH_LABEL = ["", "Weak", "Fair", "Good", "Strong"] as const;
-const STRENGTH_COLOR = [
+
+// Tailwind classes for each strength level (index 0 unused)
+const STRENGTH_BAR_CLASSES = [
   "",
-  "#f87171",
-  "#fbbf24",
-  "#a78bfa",
-  "#34d399",
+  "bg-red-400",
+  "bg-amber-400",
+  "bg-violet-400",
+  "bg-emerald-400",
+] as const;
+
+const STRENGTH_TEXT_CLASSES = [
+  "",
+  "text-red-400",
+  "text-amber-400",
+  "text-violet-400",
+  "text-emerald-400",
 ] as const;
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -66,10 +77,7 @@ export default function SignupPage() {
 
   // ── Form ──────────────────────────────────────────────────────────────────────
   return (
-    <div
-      className="min-h-screen bg-[#0a0a0f] flex items-center justify-center px-4 py-16"
-      style={{ fontFamily: "var(--font-inter)" }}
-    >
+    <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-[380px]">
         {/* Brand */}
         <div className="mb-8">
@@ -109,7 +117,7 @@ export default function SignupPage() {
             <label className="block text-[12px] font-medium text-white/40 uppercase tracking-wider mb-2">
               Full name
             </label>
-            <input
+            <Input
               type="text"
               placeholder="Rahim Khan"
               {...register("name")}
@@ -127,7 +135,7 @@ export default function SignupPage() {
             <label className="block text-[12px] font-medium text-white/40 uppercase tracking-wider mb-2">
               Email
             </label>
-            <input
+            <Input
               type="email"
               placeholder="you@example.com"
               {...register("email")}
@@ -146,7 +154,7 @@ export default function SignupPage() {
               Password
             </label>
             <div className="relative">
-              <input
+              <Input
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
                 {...register("password")}
@@ -173,13 +181,11 @@ export default function SignupPage() {
                   {[1, 2, 3, 4].map((n) => (
                     <div
                       key={n}
-                      className="h-0.5 flex-1 rounded-full transition-all duration-300"
-                      style={{
-                        background:
-                          n <= strength
-                            ? STRENGTH_COLOR[strength]
-                            : "rgba(255,255,255,0.07)",
-                      }}
+                      className={`h-0.5 flex-1 rounded-full transition-all duration-300 ${
+                        n <= strength
+                          ? STRENGTH_BAR_CLASSES[strength]
+                          : "bg-white/[0.07]"
+                      }`}
                     />
                   ))}
                 </div>
@@ -188,12 +194,9 @@ export default function SignupPage() {
                     {PASSWORD_CHECKS.map(({ label, test }) => (
                       <span
                         key={label}
-                        className="text-[11px] transition-colors"
-                        style={{
-                          color: test(password)
-                            ? "#a78bfa"
-                            : "rgba(255,255,255,0.2)",
-                        }}
+                        className={`text-[11px] transition-colors ${
+                          test(password) ? "text-violet-400" : "text-white/20"
+                        }`}
                       >
                         {test(password) ? "✓ " : ""}
                         {label}
@@ -201,8 +204,7 @@ export default function SignupPage() {
                     ))}
                   </div>
                   <span
-                    className="text-[11px] font-medium ml-2 shrink-0"
-                    style={{ color: STRENGTH_COLOR[strength] }}
+                    className={`text-[11px] font-medium ml-2 shrink-0 ${STRENGTH_TEXT_CLASSES[strength]}`}
                   >
                     {STRENGTH_LABEL[strength]}
                   </span>
@@ -216,7 +218,7 @@ export default function SignupPage() {
             <label className="block text-[12px] font-medium text-white/40 uppercase tracking-wider mb-2">
               Confirm password
             </label>
-            <input
+            <Input
               type="password"
               placeholder="••••••••"
               {...register("confirmPassword")}
@@ -232,7 +234,7 @@ export default function SignupPage() {
           {/* Terms */}
           <div>
             <label className="flex items-start gap-2.5 cursor-pointer select-none pt-1">
-              <input
+              <Input
                 type="checkbox"
                 {...register("terms")}
                 className="mt-0.5 w-4 h-4 rounded border border-white/15 bg-white/5 accent-violet-500 flex-shrink-0"

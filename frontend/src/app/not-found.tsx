@@ -2,10 +2,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div
-      className="min-h-screen bg-[#0a0a0f] text-white flex flex-col items-center justify-center px-6 relative overflow-hidden"
-      style={{ fontFamily: "var(--font-inter)" }}
-    >
+    <div className="min-h-screen bg-[#0a0a0f] text-white flex flex-col items-center justify-center px-6 relative overflow-hidden">
       {/* Background ambient glows */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-violet-600/[0.07] rounded-full blur-[120px]" />
@@ -14,28 +11,12 @@ export default function NotFound() {
       </div>
 
       {/* Grid pattern overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.02]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
-        }}
-      />
+      <div className="absolute inset-0 pointer-events-none opacity-[0.02] [background-image:linear-gradient(rgba(255,255,255,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.5)_1px,transparent_1px)] [background-size:60px_60px]" />
 
       <div className="relative flex flex-col items-center text-center max-w-lg">
         {/* 404 large number */}
         <div className="relative mb-6 select-none">
-          <span
-            className="text-[140px] sm:text-[180px] font-black leading-none tracking-tighter"
-            style={{
-              background:
-                "linear-gradient(135deg, rgba(167,139,250,0.15) 0%, rgba(139,92,246,0.08) 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}
-          >
+          <span className="text-[140px] sm:text-[180px] font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-violet-400/15 to-violet-600/[0.08]">
             404
           </span>
           {/* Glowing underline */}

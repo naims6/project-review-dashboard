@@ -54,10 +54,10 @@ export default function HomePage() {
             {/* Stat cards */}
             <div className="p-5 grid grid-cols-4 gap-3 border-b border-white/[0.05]">
               {[
-                { label: "Total", val: "248", color: "#a78bfa" },
-                { label: "Pending", val: "41", color: "#fbbf24" },
-                { label: "Approved", val: "182", color: "#34d399" },
-                { label: "Rejected", val: "25", color: "#f87171" },
+                { label: "Total", val: "248", cls: "text-violet-400" },
+                { label: "Pending", val: "41", cls: "text-amber-400" },
+                { label: "Approved", val: "182", cls: "text-emerald-400" },
+                { label: "Rejected", val: "25", cls: "text-red-400" },
               ].map((s) => (
                 <div
                   key={s.label}
@@ -66,10 +66,7 @@ export default function HomePage() {
                   <p className="text-[10px] text-white/30 uppercase tracking-widest mb-1.5">
                     {s.label}
                   </p>
-                  <p
-                    className="text-[22px] font-bold"
-                    style={{ color: s.color }}
-                  >
+                  <p className={`text-[22px] font-bold ${s.cls}`}>
                     {s.val}
                   </p>
                 </div>

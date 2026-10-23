@@ -122,7 +122,7 @@ export function SubmitProjectModal({
           {/* Project Name */}
           <Field
             label="Project Name"
-            hint="min 2 chars"
+            hint="min 3 chars"
             error={errors.name?.message}
           >
             <Input
@@ -159,7 +159,7 @@ export function SubmitProjectModal({
           {/* Description */}
           <Field
             label="Description"
-            hint="min 5 chars"
+            hint="min 20 chars"
             error={errors.description?.message}
           >
             <textarea

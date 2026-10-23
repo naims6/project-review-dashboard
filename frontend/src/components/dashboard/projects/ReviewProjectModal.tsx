@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useReviewProject } from "@/hooks/queries/use-mentor-queries";
@@ -15,7 +15,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   CheckCircle2,
   XCircle,
@@ -26,6 +25,7 @@ import {
   Mail,
   AlertCircle,
 } from "lucide-react";
+import { StatusBadge } from "@/components/shared/StatusBadge";
 
 interface ReviewProjectModalProps {
   project: MentorProjectItem | null;
@@ -51,21 +51,33 @@ export function ReviewProjectModal({
   } = useForm<ReviewProjectForm>({
     resolver: zodResolver(reviewProjectSchema),
     defaultValues: {
-      status: (project?.status === "APPROVED" || project?.status === "REJECTED")
-        ? project.status
-        : "APPROVED",
+      status:
+        project?.status === "APPROVED" || project?.status === "REJECTED"
+          ? project.status
+          : "APPROVED",
       reviewComment: "",
     },
   });
 
-  const isSubmitting = review.isPending;
+  // Re-initialize form when the project changes (fixes stale values between reviews)
+  useEffect(() => {
+    if (project) {
+      reset({
+        status:
+          project.status === "APPROVED" || project.status === "REJECTED"
+            ? project.status
+            : "APPROVED",
+        reviewComment: "",
+      });
+    }
+  }, [project, reset]);
 
+  const isSubmitting = review.isPending;
   const selectedStatus = watch("status");
 
   const onSubmit = async (data: ReviewProjectForm) => {
     if (!project) return;
     setServerError(null);
-
     try {
       await review.mutateAsync({
         id: project.id,
@@ -95,18 +107,7 @@ export function ReviewProjectModal({
             <span className="text-[11px] font-semibold uppercase tracking-wider text-violet-400">
               Project Review
             </span>
-            <Badge
-              variant="outline"
-              className={
-                project.status === "APPROVED"
-                  ? "border-emerald-500/30 text-emerald-400 bg-emerald-500/10"
-                  : project.status === "REJECTED"
-                  ? "border-rose-500/30 text-rose-400 bg-rose-500/10"
-                  : "border-amber-500/30 text-amber-400 bg-amber-500/10"
-              }
-            >
-              Current: {project.status}
-            </Badge>
+            <StatusBadge status={project.status} className="text-[10px]" />
           </div>
           <DialogTitle className="text-xl font-bold tracking-tight text-white">
             {project.name}

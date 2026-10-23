@@ -1,8 +1,6 @@
 "use client";
 
-import type { StudentProjectItem, ProjectStatus } from "@/types/project";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import type { StudentProjectItem } from "@/types/project";
 import {
   Table,
   TableBody,
@@ -13,16 +11,14 @@ import {
 } from "@/components/ui/table";
 import {
   FolderGit2,
-  CheckCircle2,
-  Clock,
-  XCircle,
   ExternalLink,
   GitBranch,
-  ChevronLeft,
-  ChevronRight,
   Loader2,
   MessageSquare,
 } from "lucide-react";
+import { StatusBadge } from "@/components/shared/StatusBadge";
+import { Pagination } from "@/components/shared/Pagination";
+import { formatDate } from "@/lib/formatDate";
 
 interface StudentProjectsTableProps {
   projects: StudentProjectItem[];
@@ -32,29 +28,6 @@ interface StudentProjectsTableProps {
   totalPages: number;
   onPageChange: (newPage: number) => void;
   onOpenSubmitModal: () => void;
-}
-
-function StatusBadge({ status }: { status: ProjectStatus }) {
-  const styles: Record<ProjectStatus, string> = {
-    APPROVED: "border-emerald-500/30 text-emerald-400 bg-emerald-500/10",
-    REJECTED: "border-rose-500/30 text-rose-400 bg-rose-500/10",
-    PENDING: "border-amber-500/30 text-amber-400 bg-amber-500/10",
-  };
-  const icons: Record<ProjectStatus, React.ReactNode> = {
-    APPROVED: <CheckCircle2 className="w-3 h-3" />,
-    REJECTED: <XCircle className="w-3 h-3" />,
-    PENDING: <Clock className="w-3 h-3" />,
-  };
-
-  return (
-    <Badge
-      variant="outline"
-      className={`text-[10px] gap-1 ${styles[status]}`}
-    >
-      {icons[status]}
-      {status}
-    </Badge>
-  );
 }
 
 export function StudentProjectsTable({
@@ -176,13 +149,7 @@ export function StudentProjectsTable({
 
                 {/* Submitted date */}
                 <TableCell className="py-3 px-4 text-xs text-white/40">
-                  {proj.createdAt
-                    ? new Date(proj.createdAt).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })
-                    : "—"}
+                  {formatDate(proj.createdAt)}
                 </TableCell>
 
                 {/* Mentor review comment */}
@@ -211,43 +178,16 @@ export function StudentProjectsTable({
         </TableBody>
       </Table>
 
-      {/* Pagination footer */}
       {!isLoading && projects.length > 0 && (
-        <div className="flex items-center justify-between gap-3 px-4 py-3 border-t border-white/[0.06] text-xs text-white/40">
-          <div>
-            Showing{" "}
-            <span className="font-medium text-white/70">{projects.length}</span>{" "}
-            of{" "}
-            <span className="font-medium text-white/70">{total}</span>{" "}
-            projects
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={page <= 1 || isLoading}
-              onClick={() => onPageChange(Math.max(1, page - 1))}
-              className="border-white/[0.08] bg-white/[0.02] text-white/70 hover:text-white h-7 px-2 text-xs"
-            >
-              <ChevronLeft className="w-3.5 h-3.5" />
-            </Button>
-
-            <span className="text-xs text-white/50 px-1">
-              {page} / {totalPages || 1}
-            </span>
-
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={page >= totalPages || isLoading}
-              onClick={() => onPageChange(page + 1)}
-              className="border-white/[0.08] bg-white/[0.02] text-white/70 hover:text-white h-7 px-2 text-xs"
-            >
-              <ChevronRight className="w-3.5 h-3.5" />
-            </Button>
-          </div>
-        </div>
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          total={total}
+          count={projects.length}
+          itemLabel="projects"
+          isLoading={isLoading}
+          onPageChange={onPageChange}
+        />
       )}
     </div>
   );

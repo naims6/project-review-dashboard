@@ -15,8 +15,8 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { Badge } from "@/components/ui/badge";
 import { LogoutButton } from "@/components/LogoutButton";
+import { RoleBadge } from "@/components/shared/RoleBadge";
 import {
   LayoutDashboard,
   Users,
@@ -56,17 +56,6 @@ function getNavItems(role: User["role"]): NavItem[] {
   items.push({ label: "Profile", href: "/dashboard/profile", icon: UserCircle2 });
 
   return items;
-}
-
-function getRoleBadgeStyle(role: string) {
-  switch (role) {
-    case "ADMIN":
-      return "border-violet-500/40 text-violet-300 bg-violet-500/10";
-    case "MENTOR":
-      return "border-cyan-500/40 text-cyan-300 bg-cyan-500/10";
-    default:
-      return "border-emerald-500/40 text-emerald-300 bg-emerald-500/10";
-  }
 }
 
 export function DashboardSidebar({ user }: DashboardSidebarProps) {
@@ -143,12 +132,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
               <p className="text-xs font-semibold text-white/90 truncate leading-tight">
                 {user.name}
               </p>
-              <Badge
-                variant="outline"
-                className={`mt-1 text-[9px] uppercase font-bold tracking-wider py-0 px-1.5 ${getRoleBadgeStyle(user.role)}`}
-              >
-                {user.role}
-              </Badge>
+              <RoleBadge role={user.role} className="mt-1 text-[9px] py-0 px-1.5" />
             </div>
           </div>
 

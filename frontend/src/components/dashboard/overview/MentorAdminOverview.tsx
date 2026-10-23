@@ -5,7 +5,7 @@ import type { User } from "@/types/auth";
 import { useMentorStats, useMentorProjects } from "@/hooks/queries/use-mentor-queries";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/shared/StatusBadge";
 import {
   FolderGit2,
   Clock,
@@ -236,18 +236,10 @@ export function MentorAdminOverview({ user }: MentorAdminOverviewProps) {
                       </p>
                     </div>
 
-                    <Badge
-                      variant="outline"
-                      className={
-                        project.status === "APPROVED"
-                          ? "border-emerald-500/30 text-emerald-400 bg-emerald-500/10 text-[9px]"
-                          : project.status === "REJECTED"
-                          ? "border-rose-500/30 text-rose-400 bg-rose-500/10 text-[9px]"
-                          : "border-amber-500/30 text-amber-400 bg-amber-500/10 text-[9px]"
-                      }
-                    >
-                      {project.status}
-                    </Badge>
+                    <StatusBadge
+                      status={project.status}
+                      className="text-[9px]"
+                    />
                   </div>
 
                   <div className="flex items-center justify-between text-xs pt-1 border-t border-white/[0.04]">

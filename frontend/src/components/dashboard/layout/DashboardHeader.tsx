@@ -5,8 +5,8 @@ import Link from "next/link";
 import type { User } from "@/types/auth";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 import { ChevronRight } from "lucide-react";
+import { RoleBadge } from "@/components/shared/RoleBadge";
 
 interface DashboardHeaderProps {
   user: User;
@@ -24,13 +24,6 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
   const pathname = usePathname();
   const segment = pathname.split("/").pop() ?? "overview";
   const sectionTitle = SEGMENT_LABELS[segment] ?? "Dashboard";
-
-  const roleBadgeClass =
-    user.role === "ADMIN"
-      ? "border-violet-500/40 text-violet-300 bg-violet-500/10 text-[9px] uppercase font-bold"
-      : user.role === "MENTOR"
-      ? "border-cyan-500/40 text-cyan-300 bg-cyan-500/10 text-[9px] uppercase font-bold"
-      : "border-emerald-500/40 text-emerald-300 bg-emerald-500/10 text-[9px] uppercase font-bold";
 
   return (
     <header className="h-16 shrink-0 border-b border-white/[0.06] bg-[#0c0c14]/80 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-30">
@@ -56,9 +49,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
         <span className="text-white/80 font-medium">{user.name}</span>
         <span className="text-white/20">|</span>
-        <Badge variant="outline" className={roleBadgeClass}>
-          {user.role}
-        </Badge>
+        <RoleBadge role={user.role} className="text-[9px] uppercase font-bold" />
       </div>
     </header>
   );

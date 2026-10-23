@@ -1,4 +1,5 @@
-export type ProjectStatus = "PENDING" | "APPROVED" | "REJECTED";
+import type { ProjectStatus } from "./project";
+export type { ProjectStatus };
 
 export interface StudentInfo {
   id: string;

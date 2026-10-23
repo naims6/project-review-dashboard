@@ -1,13 +1,12 @@
 import Link from "next/link";
+import { Logo } from "@/components/shared/Logo";
 
 export default function Navbar() {
   return (
     <header className="fixed top-0 inset-x-0 z-50 border-b border-white/[0.06] bg-[#0a0a0f]/90 backdrop-blur-md">
       <div className="max-w-6xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-14">
-          <Link href="/" className="text-[15px] font-semibold tracking-tight text-white">
-            Project<span className="text-violet-400">Hub</span>
-          </Link>
+          <Logo />
 
           <div className="flex items-center gap-2">
             <Link

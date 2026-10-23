@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Logo } from "@/components/shared/Logo";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -82,9 +83,7 @@ export default function SignupPage() {
       <div className="w-full max-w-[380px]">
         {/* Brand */}
         <div className="mb-8">
-          <Link href="/" className="text-[15px] font-semibold text-white">
-            Project<span className="text-violet-400">Hub</span>
-          </Link>
+          <Logo />
         </div>
 
         {/* Heading */}

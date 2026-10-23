@@ -15,15 +15,8 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { RoleBadge } from "@/components/shared/RoleBadge";
-import {
-  LayoutDashboard,
-  Users,
-  FolderGit2,
-  ShieldCheck,
-  GraduationCap,
-  Home,
-} from "lucide-react";
+import { Logo } from "@/components/shared/Logo";
+import { LayoutDashboard, Users, FolderGit2, Home } from "lucide-react";
 
 interface DashboardSidebarProps {
   user: User;
@@ -75,12 +68,7 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
       {/* ── Brand Header ── */}
       <SidebarHeader className="border-b border-white/[0.06] h-14 px-5 flex items-center justify-center">
         <div className="flex items-center w-full">
-          <Link
-            href="/"
-            className="text-[15px] font-semibold tracking-tight text-white truncate"
-          >
-            Project<span className="text-violet-400">Hub</span>
-          </Link>
+          <Logo />
         </div>
       </SidebarHeader>
 

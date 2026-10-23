@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertCircle, Loader2, FolderGit2 } from "lucide-react";
+import { FormField } from "@/components/shared/FormField";
 
 // ── Props ────────────────────────────────────────────────────────────────────
 
@@ -23,31 +24,6 @@ interface SubmitProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
-
-// ── Component ────────────────────────────────────────────────────────────────
-// Reusable field wrapper
-const Field = ({
-  label,
-  hint,
-  error,
-  children,
-}: {
-  label: string;
-  hint?: string;
-  error?: string;
-  children: React.ReactNode;
-}) => (
-  <div>
-    <div className="flex items-center justify-between mb-1.5">
-      <label className="block text-[11px] font-semibold text-white/50 uppercase tracking-wider">
-        {label}
-      </label>
-      {hint && <span className="text-[10px] text-white/30">{hint}</span>}
-    </div>
-    {children}
-    {error && <p className="mt-1 text-[11px] text-rose-400">{error}</p>}
-  </div>
-);
 
 export function SubmitProjectModal({
   isOpen,
@@ -120,7 +96,7 @@ export function SubmitProjectModal({
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-1">
           {/* Project Name */}
-          <Field
+          <FormField
             label="Project Name"
             hint="min 3 chars"
             error={errors.name?.message}
@@ -130,10 +106,10 @@ export function SubmitProjectModal({
               placeholder="e.g. E-Commerce App"
               className={inputClass}
             />
-          </Field>
+          </FormField>
 
           {/* Repo URL */}
-          <Field
+          <FormField
             label="GitHub Repository URL"
             hint="must be github.com"
             error={errors.repoUrl?.message}
@@ -144,20 +120,20 @@ export function SubmitProjectModal({
               placeholder="https://github.com/username/repo"
               className={inputClass}
             />
-          </Field>
+          </FormField>
 
           {/* Live URL */}
-          <Field label="Live Demo URL" error={errors.liveUrl?.message}>
+          <FormField label="Live Demo URL" error={errors.liveUrl?.message}>
             <Input
               {...register("liveUrl")}
               type="url"
               placeholder="https://my-project.vercel.app"
               className={inputClass}
             />
-          </Field>
+          </FormField>
 
           {/* Description */}
-          <Field
+          <FormField
             label="Description"
             hint="min 20 chars"
             error={errors.description?.message}
@@ -168,7 +144,7 @@ export function SubmitProjectModal({
               placeholder="Describe what your project does, the tech stack used, and any notable features..."
               className={`${inputClass} resize-none`}
             />
-          </Field>
+          </FormField>
 
           <DialogFooter className="pt-2 gap-2 border-t border-white/[0.06]">
             <Button

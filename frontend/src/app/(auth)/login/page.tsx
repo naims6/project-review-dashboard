@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { login } from "@/services/auth.service";
 import { loginSchema, type LoginForm } from "@/schemas/auth.schema";
 import { Input } from "@/components/ui/input";
+import { FormField } from "@/components/shared/FormField";
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -64,20 +65,14 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
           {/* Email */}
-          <div>
-            <label className="block text-[12px] font-medium text-white/40 uppercase tracking-wider mb-2">
-              Email
-            </label>
+          <FormField label="Email" error={errors.email?.message} variant="auth">
             <Input
               type="email"
               placeholder="you@example.com"
               {...register("email")}
               className="w-full px-4 py-2.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white text-[14px] placeholder:text-white/20 focus:outline-none focus:border-violet-500/50 focus:bg-white/[0.06] transition-all"
             />
-            {errors.email && (
-              <p className="mt-1.5 text-[12px] text-red-400">{errors.email.message}</p>
-            )}
-          </div>
+          </FormField>
 
           {/* Password */}
           <div>

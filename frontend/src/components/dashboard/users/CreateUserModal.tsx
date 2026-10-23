@@ -24,6 +24,7 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
+import { FormField } from "@/components/shared/FormField";
 
 interface CreateUserModalProps {
   isOpen: boolean;
@@ -143,42 +144,27 @@ export function CreateUserModal({
           </div>
 
           {/* Full Name */}
-          <div>
-            <label className="block text-[11px] font-semibold text-white/50 uppercase tracking-wider mb-1.5">
-              Full Name <span className="text-rose-400">*</span>
-            </label>
+          <FormField label="Full Name *" error={errors.name?.message}>
             <Input
               type="text"
               placeholder="e.g. John Doe"
               {...register("name")}
               className="bg-white/[0.03] border-white/[0.08] text-white text-xs placeholder:text-white/20 focus-visible:border-violet-500/60 focus-visible:ring-violet-500/20"
             />
-            {errors.name && (
-              <p className="mt-1 text-xs text-rose-400">{errors.name.message}</p>
-            )}
-          </div>
+          </FormField>
 
           {/* Email */}
-          <div>
-            <label className="block text-[11px] font-semibold text-white/50 uppercase tracking-wider mb-1.5">
-              Email Address <span className="text-rose-400">*</span>
-            </label>
+          <FormField label="Email Address *" error={errors.email?.message}>
             <Input
               type="email"
               placeholder="name@example.com"
               {...register("email")}
               className="bg-white/[0.03] border-white/[0.08] text-white text-xs placeholder:text-white/20 focus-visible:border-violet-500/60 focus-visible:ring-violet-500/20"
             />
-            {errors.email && (
-              <p className="mt-1 text-xs text-rose-400">{errors.email.message}</p>
-            )}
-          </div>
+          </FormField>
 
           {/* Password */}
-          <div>
-            <label className="block text-[11px] font-semibold text-white/50 uppercase tracking-wider mb-1.5">
-              Password <span className="text-rose-400">*</span>
-            </label>
+          <FormField label="Password *" error={errors.password?.message}>
             <div className="relative">
               <Input
                 type={showPassword ? "text" : "password"}
@@ -198,10 +184,7 @@ export function CreateUserModal({
                 )}
               </button>
             </div>
-            {errors.password && (
-              <p className="mt-1 text-xs text-rose-400">{errors.password.message}</p>
-            )}
-          </div>
+          </FormField>
 
           <DialogFooter className="pt-2 gap-2 border-t border-white/[0.06]">
             <Button

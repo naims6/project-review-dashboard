@@ -26,6 +26,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { StatusBadge } from "@/components/shared/StatusBadge";
+import { FormField } from "@/components/shared/FormField";
 
 interface ReviewProjectModalProps {
   project: MentorProjectItem | null;
@@ -215,20 +216,17 @@ export function ReviewProjectModal({
           </div>
 
           {/* Review Comment */}
-          <div>
-            <label className="block text-[11px] font-semibold text-white/50 uppercase tracking-wider mb-1.5">
-              Feedback & Comments <span className="text-white/30 lowercase">(optional)</span>
-            </label>
+          <FormField
+            label="Feedback & Comments (optional)"
+            error={errors.reviewComment?.message}
+          >
             <textarea
               {...register("reviewComment")}
               rows={3}
               placeholder="Provide constructive feedback, notes on architecture, or improvements needed..."
               className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white text-xs placeholder:text-white/20 focus:outline-none focus:border-violet-500/60 focus:bg-white/[0.05] transition-all resize-none"
             />
-            {errors.reviewComment && (
-              <p className="mt-1 text-xs text-rose-400">{errors.reviewComment.message}</p>
-            )}
-          </div>
+          </FormField>
 
           <DialogFooter className="pt-2 gap-2 border-t border-white/[0.06]">
             <Button

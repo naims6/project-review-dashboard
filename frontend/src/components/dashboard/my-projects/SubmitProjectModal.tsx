@@ -19,10 +19,7 @@ import { AlertCircle, Loader2, FolderGit2 } from "lucide-react";
 // ── Validation schema ────────────────────────────────────────────────────────
 
 const submitSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(2, "Project name must be at least 2 characters"),
+  name: z.string().trim().min(2, "Project name must be at least 2 characters"),
   repoUrl: z
     .string()
     .trim()
@@ -49,6 +46,29 @@ interface SubmitProjectModalProps {
 }
 
 // ── Component ────────────────────────────────────────────────────────────────
+// Reusable field wrapper
+const Field = ({
+  label,
+  hint,
+  error,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  error?: string;
+  children: React.ReactNode;
+}) => (
+  <div>
+    <div className="flex items-center justify-between mb-1.5">
+      <label className="block text-[11px] font-semibold text-white/50 uppercase tracking-wider">
+        {label}
+      </label>
+      {hint && <span className="text-[10px] text-white/30">{hint}</span>}
+    </div>
+    {children}
+    {error && <p className="mt-1 text-[11px] text-rose-400">{error}</p>}
+  </div>
+);
 
 export function SubmitProjectModal({
   isOpen,
@@ -86,30 +106,6 @@ export function SubmitProjectModal({
     onClose();
   };
 
-  // Reusable field wrapper
-  const Field = ({
-    label,
-    hint,
-    error,
-    children,
-  }: {
-    label: string;
-    hint?: string;
-    error?: string;
-    children: React.ReactNode;
-  }) => (
-    <div>
-      <div className="flex items-center justify-between mb-1.5">
-        <label className="block text-[11px] font-semibold text-white/50 uppercase tracking-wider">
-          {label}
-        </label>
-        {hint && <span className="text-[10px] text-white/30">{hint}</span>}
-      </div>
-      {children}
-      {error && <p className="mt-1 text-[11px] text-rose-400">{error}</p>}
-    </div>
-  );
-
   const inputClass =
     "w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white text-xs placeholder:text-white/20 focus:outline-none focus:border-violet-500/60 focus:bg-white/[0.05] transition-all";
 
@@ -129,7 +125,8 @@ export function SubmitProjectModal({
             Submit Your Project
           </DialogTitle>
           <DialogDescription className="text-xs text-white/50">
-            Fill in the details below. Your project will be reviewed by a mentor.
+            Fill in the details below. Your project will be reviewed by a
+            mentor.
           </DialogDescription>
         </DialogHeader>
 
@@ -143,7 +140,11 @@ export function SubmitProjectModal({
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-1">
           {/* Project Name */}
-          <Field label="Project Name" hint="min 2 chars" error={errors.name?.message}>
+          <Field
+            label="Project Name"
+            hint="min 2 chars"
+            error={errors.name?.message}
+          >
             <input
               {...register("name")}
               placeholder="e.g. E-Commerce App"
@@ -176,7 +177,11 @@ export function SubmitProjectModal({
           </Field>
 
           {/* Description */}
-          <Field label="Description" hint="min 5 chars" error={errors.description?.message}>
+          <Field
+            label="Description"
+            hint="min 5 chars"
+            error={errors.description?.message}
+          >
             <textarea
               {...register("description")}
               rows={3}

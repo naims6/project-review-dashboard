@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { reviewProject } from "@/services/mentor.service";
-import type { MentorProjectItem, ProjectStatus } from "@/types/mentor";
+import type { MentorProjectItem } from "@/types/mentor";
 import {
   Dialog,
   DialogContent,

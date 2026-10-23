@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getMe } from "@/services/auth.service";
-import { StudentDashboardView } from "@/components/dashboard/StudentDashboardView";
+import { StudentDashboardView } from "@/components/dashboard/my-projects/StudentDashboardView";
 
 /** /dashboard/my-projects — Students only */
 export default async function MyProjectsPage() {

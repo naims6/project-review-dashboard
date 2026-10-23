@@ -22,7 +22,6 @@ const SEGMENT_LABELS: Record<string, string> = {
 
 export function DashboardHeader({ user }: DashboardHeaderProps) {
   const pathname = usePathname();
-  // e.g. /dashboard/my-projects → "my-projects"
   const segment = pathname.split("/").pop() ?? "overview";
   const sectionTitle = SEGMENT_LABELS[segment] ?? "Dashboard";
 

@@ -1,5 +1,5 @@
 import { getMe } from "@/services/auth.service";
-import { OverviewView } from "@/components/dashboard/OverviewView";
+import { OverviewView } from "@/components/dashboard/overview/OverviewView";
 
 export default async function OverviewPage() {
   const user = await getMe();

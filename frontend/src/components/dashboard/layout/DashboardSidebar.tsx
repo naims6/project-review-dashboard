@@ -7,13 +7,11 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Logo } from "@/components/shared/Logo";
 import { LayoutDashboard, Users, FolderGit2, Home } from "lucide-react";
@@ -45,7 +43,6 @@ function getNavItems(role: User["role"]): NavItem[] {
       icon: FolderGit2,
     });
   } else {
-    // STUDENT
     items.push({
       label: "My Projects",
       href: "/dashboard/my-projects",
@@ -58,67 +55,64 @@ function getNavItems(role: User["role"]): NavItem[] {
 
 export function DashboardSidebar({ user }: DashboardSidebarProps) {
   const pathname = usePathname();
+  const { isMobile, setOpenMobile } = useSidebar();
   const navItems = getNavItems(user.role);
+
+  function handleNavClick() {
+    if (isMobile) setOpenMobile(false);
+  }
 
   return (
     <Sidebar
-      collapsible="icon"
+      collapsible="offcanvas"
       className="border-r border-white/[0.06] bg-[#0a0a0f] text-white"
     >
       {/* ── Brand Header ── */}
-      <SidebarHeader className="border-b border-white/[0.06] h-14 px-5 flex items-center justify-center">
-        <div className="flex items-center w-full">
-          <Logo />
-        </div>
+      <SidebarHeader className="border-b border-white/[0.06] h-14 px-5 flex flex-row items-center justify-start">
+        <Logo />
       </SidebarHeader>
 
-      {/* ── Navigation Menu ── */}
+      {/* ── Navigation ── */}
       <SidebarContent className="p-3">
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu className="gap-1">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = pathname === item.href;
+        <SidebarMenu className="gap-1">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href;
 
-                return (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton
-                      render={<Link href={item.href} />}
-                      isActive={isActive}
-                      tooltip={item.label}
-                      className={`w-full justify-start gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
-                        isActive
-                          ? "bg-violet-600 text-white font-semibold shadow-lg shadow-violet-600/25 ring-1 ring-violet-400/30"
-                          : "text-white/60 hover:text-white hover:bg-white/[0.05]"
-                      }`}
-                    >
-                      <Icon
-                        className={`w-4 h-4 shrink-0 ${
-                          isActive ? "text-white" : "text-white/50"
-                        }`}
-                      />
-                      <span className="truncate">{item.label}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+            return (
+              <SidebarMenuItem key={item.href}>
+                <Link
+                  href={item.href}
+                  onClick={handleNavClick}
+                  className={`flex items-center w-full gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                    isActive
+                      ? "bg-violet-600 text-white font-semibold shadow-lg shadow-violet-600/25 ring-1 ring-violet-400/30"
+                      : "text-white/60 hover:text-white hover:bg-white/[0.06]"
+                  }`}
+                >
+                  <Icon
+                    className={`w-4 h-4 shrink-0 ${
+                      isActive ? "text-white" : "text-white/50"
+                    }`}
+                  />
+                  <span className="truncate">{item.label}</span>
+                </Link>
+              </SidebarMenuItem>
+            );
+          })}
+        </SidebarMenu>
       </SidebarContent>
 
       {/* ── Footer ── */}
-      <SidebarFooter className="border-t border-white/[0.06] p-3 gap-3">
-        {/* Back to Home button */}
-        <SidebarMenuButton
-          render={<Link href="/" />}
-          tooltip="Back to Home"
-          className="w-full justify-start gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/[0.05] transition-all"
+      <SidebarFooter className="border-t border-white/[0.06] p-3">
+        <Link
+          href="/"
+          onClick={handleNavClick}
+          className="flex items-center w-full gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/[0.06] transition-all"
         >
           <Home className="w-4 h-4 shrink-0 text-white/50" />
           <span className="truncate">Back to Home</span>
-        </SidebarMenuButton>
+        </Link>
       </SidebarFooter>
 
       <SidebarRail />

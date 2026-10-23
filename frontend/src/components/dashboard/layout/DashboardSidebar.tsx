@@ -15,15 +15,14 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { LogoutButton } from "@/components/LogoutButton";
 import { RoleBadge } from "@/components/shared/RoleBadge";
 import {
   LayoutDashboard,
   Users,
   FolderGit2,
-  UserCircle2,
   ShieldCheck,
   GraduationCap,
+  Home,
 } from "lucide-react";
 
 interface DashboardSidebarProps {
@@ -47,13 +46,19 @@ function getNavItems(role: User["role"]): NavItem[] {
       { label: "Users", href: "/dashboard/users", icon: Users },
     );
   } else if (role === "MENTOR") {
-    items.push({ label: "Projects", href: "/dashboard/projects", icon: FolderGit2 });
+    items.push({
+      label: "Projects",
+      href: "/dashboard/projects",
+      icon: FolderGit2,
+    });
   } else {
     // STUDENT
-    items.push({ label: "My Projects", href: "/dashboard/my-projects", icon: FolderGit2 });
+    items.push({
+      label: "My Projects",
+      href: "/dashboard/my-projects",
+      icon: FolderGit2,
+    });
   }
-
-  items.push({ label: "Profile", href: "/dashboard/profile", icon: UserCircle2 });
 
   return items;
 }
@@ -115,31 +120,17 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
         </SidebarGroup>
       </SidebarContent>
 
-      {/* ── User Profile Footer ── */}
-      <SidebarFooter className="border-t border-white/[0.06] p-3">
-        <div className="flex items-center justify-between gap-2 p-2 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-full bg-violet-600/20 border border-violet-500/30 flex items-center justify-center shrink-0">
-              {user.role === "ADMIN" ? (
-                <ShieldCheck className="w-4 h-4 text-violet-400" />
-              ) : user.role === "MENTOR" ? (
-                <ShieldCheck className="w-4 h-4 text-cyan-400" />
-              ) : (
-                <GraduationCap className="w-4 h-4 text-emerald-400" />
-              )}
-            </div>
-            <div className="min-w-0 group-data-[collapsible=icon]:hidden">
-              <p className="text-xs font-semibold text-white/90 truncate leading-tight">
-                {user.name}
-              </p>
-              <RoleBadge role={user.role} className="mt-1 text-[9px] py-0 px-1.5" />
-            </div>
-          </div>
-
-          <div className="group-data-[collapsible=icon]:hidden">
-            <LogoutButton />
-          </div>
-        </div>
+      {/* ── Footer ── */}
+      <SidebarFooter className="border-t border-white/[0.06] p-3 gap-3">
+        {/* Back to Home button */}
+        <SidebarMenuButton
+          render={<Link href="/" />}
+          tooltip="Back to Home"
+          className="w-full justify-start gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-white/60 hover:text-white hover:bg-white/[0.05] transition-all"
+        >
+          <Home className="w-4 h-4 shrink-0 text-white/50" />
+          <span className="truncate">Back to Home</span>
+        </SidebarMenuButton>
       </SidebarFooter>
 
       <SidebarRail />

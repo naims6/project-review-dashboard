@@ -1,12 +1,13 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import { useState, useRef, useEffect } from "react";
 import type { User } from "@/types/auth";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-import { ChevronRight } from "lucide-react";
-import { RoleBadge } from "@/components/shared/RoleBadge";
+import { ChevronRight, UserCircle2, LogOut, User as UserIcon } from "lucide-react";
+import { logout } from "@/services/auth.service";
 
 interface DashboardHeaderProps {
   user: User;
@@ -22,8 +23,37 @@ const SEGMENT_LABELS: Record<string, string> = {
 
 export function DashboardHeader({ user }: DashboardHeaderProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const segment = pathname.split("/").pop() ?? "overview";
   const sectionTitle = SEGMENT_LABELS[segment] ?? "Dashboard";
+
+  const [open, setOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await logout();
+      router.push("/login");
+      router.refresh();
+    } catch {
+      router.push("/login");
+    } finally {
+      setLoggingOut(false);
+    }
+  };
 
   return (
     <header className="h-16 shrink-0 border-b border-white/[0.06] bg-[#0c0c14]/80 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-30">
@@ -44,12 +74,45 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
         </div>
       </div>
 
-      {/* User pill */}
-      <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.06] text-xs">
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-        <span className="text-white/80 font-medium">{user.name}</span>
-        <span className="text-white/20">|</span>
-        <RoleBadge role={user.role} className="text-[9px] uppercase font-bold" />
+      {/* User icon with dropdown */}
+      <div className="relative" ref={dropdownRef}>
+        <button
+          onClick={() => setOpen((prev) => !prev)}
+          aria-label="User menu"
+          className="w-9 h-9 rounded-full bg-white/[0.05] border border-white/[0.08] flex items-center justify-center text-white/70 hover:text-white hover:bg-white/[0.10] hover:border-violet-500/40 transition-all"
+        >
+          <UserCircle2 className="w-5 h-5" />
+        </button>
+
+        {open && (
+          <div className="absolute right-0 mt-2 w-52 rounded-xl border border-white/[0.08] bg-[#0f0f1a] shadow-xl shadow-black/40 overflow-hidden z-50">
+            {/* User info */}
+            <div className="px-4 py-3 border-b border-white/[0.06]">
+              <p className="text-xs font-semibold text-white/90 truncate">{user.name}</p>
+              <p className="text-[10px] text-white/40 truncate mt-0.5">{user.email}</p>
+            </div>
+
+            {/* Profile link */}
+            <Link
+              href="/dashboard/profile"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2.5 px-4 py-2.5 text-xs text-white/70 hover:text-white hover:bg-white/[0.05] transition-colors"
+            >
+              <UserIcon className="w-3.5 h-3.5 text-violet-400" />
+              Profile
+            </Link>
+
+            {/* Logout */}
+            <button
+              onClick={handleLogout}
+              disabled={loggingOut}
+              className="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs text-white/70 hover:text-white hover:bg-white/[0.05] transition-colors disabled:opacity-50"
+            >
+              <LogOut className="w-3.5 h-3.5 text-red-400" />
+              {loggingOut ? "Signing out…" : "Sign out"}
+            </button>
+          </div>
+        )}
       </div>
     </header>
   );

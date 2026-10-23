@@ -1,10 +1,7 @@
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { getMe } from "@/services/auth.service";
-import {
-  SidebarProvider,
-  SidebarInset,
-} from "@/components/ui/sidebar";
+import { getMe } from "@/lib/api/get-me";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/layout/DashboardSidebar";
 import { DashboardHeader } from "@/components/dashboard/layout/DashboardHeader";
 import { UserProvider } from "@/providers/user-provider";

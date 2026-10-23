@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getMe } from "@/services/auth.service";
+import { getMe } from "@/lib/api/get-me";
 import { StudentDashboardView } from "@/components/dashboard/my-projects/StudentDashboardView";
 
 export default async function MyProjectsPage() {

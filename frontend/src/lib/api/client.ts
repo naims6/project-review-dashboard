@@ -81,10 +81,9 @@ async function request<TResponse, TBody = unknown>(
       method,
       headers,
       ...(body ? { body: JSON.stringify(body) } : {}),
-      next: {
-        ...(tags ? { tags } : {}),
-        ...(revalidate !== undefined ? { revalidate } : {}),
-      },
+      ...(tags || revalidate !== undefined
+        ? { next: { ...(tags ? { tags } : {}), ...(revalidate !== undefined ? { revalidate } : {}) } }
+        : { cache: "no-store" }),
     });
 
   let res = await doFetch(await buildHeaders(extra));

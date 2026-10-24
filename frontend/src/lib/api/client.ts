@@ -27,7 +27,13 @@ async function getTokens() {
 
 async function setAccessToken(token: string) {
   const store = await cookies();
-  store.set("accessToken", token, { httpOnly: true, path: "/" });
+  store.set("accessToken", token, {
+    httpOnly: true,
+    path: "/",
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 15 * 60, 
+  });
 }
 
 async function tryRefreshToken(refreshToken: string): Promise<string | null> {

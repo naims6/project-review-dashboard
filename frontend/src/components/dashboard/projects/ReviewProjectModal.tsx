@@ -102,7 +102,7 @@ export function ReviewProjectModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-xl bg-[#111118] border border-white/[0.08] text-white p-6 rounded-2xl shadow-2xl">
+      <DialogContent className="max-w-2xl bg-[#111118] border border-white/[0.08] text-white p-6 rounded-2xl shadow-2xl">
         <DialogHeader className="gap-1.5 pb-2 border-b border-white/[0.06]">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-violet-400">

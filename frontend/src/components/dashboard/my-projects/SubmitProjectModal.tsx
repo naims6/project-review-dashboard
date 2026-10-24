@@ -59,7 +59,7 @@ export function SubmitProjectModal({ isOpen, onClose }: SubmitProjectModalProps)
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="max-w-md bg-[#0e0e17] border border-white/[0.08] rounded-2xl shadow-2xl p-0 gap-0 overflow-hidden">
+      <DialogContent className="max-w-lg bg-[#0e0e17] border border-white/[0.08] rounded-2xl shadow-2xl p-0 gap-0 overflow-hidden">
 
         {/* Header */}
         <div className="px-6 pt-6 pb-5 border-b border-white/[0.06]">

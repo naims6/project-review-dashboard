@@ -82,7 +82,7 @@ export function CreateUserModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-md bg-[#111118] border border-white/[0.08] text-white p-6 rounded-2xl shadow-2xl">
+      <DialogContent className="max-w-lg bg-[#111118] border border-white/[0.08] text-white p-6 rounded-2xl shadow-2xl">
         <DialogHeader className="gap-1.5 pb-2 border-b border-white/[0.06]">
           <div className="flex items-center gap-2 text-violet-400">
             <UserPlus className="w-4 h-4" />

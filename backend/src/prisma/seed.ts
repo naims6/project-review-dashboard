@@ -4,23 +4,22 @@ import bcryptjs from "bcryptjs";
 import { db } from "./db.js";
 import config from "../config/env.js";
 
-
 const USERS_TO_SEED = [
   {
-    name: "System Admin",
-    email: "admin@demo.com",
+    name: "Jhankar Mahbub",
+    email: "jhankar@gmail.com",
     password: "password123",
     role: "ADMIN" as const,
   },
   {
-    name: "Lead Mentor",
-    email: "mentor@demo.com",
+    name: "Rakib Hasan",
+    email: "rakib@gmail.com",
     password: "password123",
     role: "MENTOR" as const,
   },
   {
-    name: "Sample Student",
-    email: "student@demo.com",
+    name: "Talha Tarique",
+    email: "talha@gmail.com",
     password: "password123",
     role: "STUDENT" as const,
   },
@@ -35,11 +34,16 @@ const seed = async () => {
     }).first();
 
     if (existing) {
-      console.log(`ℹ️  User already exists: ${user.email} (${user.role}). Skipping.`);
+      console.log(
+        `ℹ️  User already exists: ${user.email} (${user.role}). Skipping.`,
+      );
       continue;
     }
 
-    const hashedPassword = await bcryptjs.hash(user.password, config.bcrypt_salt_rounds);
+    const hashedPassword = await bcryptjs.hash(
+      user.password,
+      config.bcrypt_salt_rounds,
+    );
 
     await db.orm.public.User.create({
       name: user.name,

@@ -22,8 +22,20 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
+
+  const demoAccounts = [
+    { label: "Admin", email: "jhankar@gmail.com", password: "password123" },
+    { label: "Mentor", email: "rakib@gmail.com", password: "password123" },
+    { label: "Student", email: "talha@gmail.com", password: "password123" },
+  ];
+
+  const fillDemo = (email: string, password: string) => {
+    setValue("email", email, { shouldValidate: true });
+    setValue("password", password, { shouldValidate: true });
+  };
 
   const onSubmit = async (data: LoginForm) => {
     setServerError(null);
@@ -123,6 +135,27 @@ export default function LoginPage() {
             {isSubmitting ? "Signing in…" : "Sign in"}
           </button>
         </form>
+
+        {/* Demo accounts */}
+        <div className="mt-6">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="flex-1 h-px bg-white/[0.06]" />
+            <span className="text-[11px] text-white/20 uppercase tracking-wider">Demo accounts</span>
+            <div className="flex-1 h-px bg-white/[0.06]" />
+          </div>
+          <div className="flex gap-2">
+            {demoAccounts.map(({ label, email, password }) => (
+              <button
+                key={label}
+                type="button"
+                onClick={() => fillDemo(email, password)}
+                className="flex-1 py-2 rounded-lg border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.07] hover:border-violet-500/30 text-[12px] text-white/40 hover:text-white/70 transition-all"
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
